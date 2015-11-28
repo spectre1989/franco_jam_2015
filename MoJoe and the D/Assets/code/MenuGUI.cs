@@ -6,12 +6,12 @@ using System.Net.Sockets;
 
 public class MenuGUI : MonoBehaviour 
 {
-    private NetworkManager networkManager;
+    private CustomNetworkManager networkManager;
     private State state = null;
 
     private void Start()
     {
-        this.networkManager = this.GetComponent<NetworkManager>();
+        this.networkManager = this.GetComponent<CustomNetworkManager>();
         this.state = new JoinOrHostState(this.networkManager);
     }
 
@@ -30,12 +30,12 @@ public class MenuGUI : MonoBehaviour
 
     private class State
     {
-        protected NetworkManager networkManager = null;
+        protected CustomNetworkManager networkManager = null;
         protected State nextState = null;
 
         public State NextState { get { return this.nextState; } }
 
-        public State(NetworkManager networkManager)
+        public State(CustomNetworkManager networkManager)
         {
             this.networkManager = networkManager;
         }
@@ -45,22 +45,31 @@ public class MenuGUI : MonoBehaviour
 
     private class JoinOrHostState : State
     {
-        public JoinOrHostState(NetworkManager networkManager)
+        public JoinOrHostState(CustomNetworkManager networkManager)
             : base(networkManager)
         {
         }
 
         public override void OnGUI()
         {
-            if (GUILayout.Button("Host Game"))
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Player Name:");
+            this.networkManager.playerName = GUILayout.TextField(this.networkManager.playerName, GUILayout.Width(150));
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(20);
+
+            if (GUILayout.Button("Host Game", GUILayout.Width(100)))
             {
                 this.networkManager.StartHost();
                 this.nextState = new HostInGameState(this.networkManager);
             }
 
+            GUILayout.Space(20);
+
             GUILayout.BeginHorizontal();
-            this.networkManager.networkAddress = GUILayout.TextField(this.networkManager.networkAddress);
-            if (GUILayout.Button("Join Game"))
+            this.networkManager.networkAddress = GUILayout.TextField(this.networkManager.networkAddress, GUILayout.Width(100));
+            if (GUILayout.Button("Join Game", GUILayout.Width(100)))
             {
                 this.networkManager.StartClient();
                 this.nextState = new WaitForJoinGameState(this.networkManager);
@@ -71,7 +80,7 @@ public class MenuGUI : MonoBehaviour
 
     private class WaitForJoinGameState : State
     {
-        public WaitForJoinGameState(NetworkManager networkManager)
+        public WaitForJoinGameState(CustomNetworkManager networkManager)
             : base(networkManager)
         {
         }
@@ -88,7 +97,7 @@ public class MenuGUI : MonoBehaviour
             else
             {
                 GUILayout.Label("Failed to connect :(");
-                if (GUILayout.Button("Back"))
+                if (GUILayout.Button("Back", GUILayout.Width(100)))
                 {
                     this.nextState = new JoinOrHostState(this.networkManager);
                 }
@@ -98,7 +107,7 @@ public class MenuGUI : MonoBehaviour
 
     private class ClientInGameState : State
     {
-        public ClientInGameState(NetworkManager networkManager)
+        public ClientInGameState(CustomNetworkManager networkManager)
             : base(networkManager)
         {
         }
@@ -111,7 +120,7 @@ public class MenuGUI : MonoBehaviour
 
     private class HostInGameState : State
     {
-        public HostInGameState(NetworkManager networkManager)
+        public HostInGameState(CustomNetworkManager networkManager)
             : base(networkManager)
         {
         }
