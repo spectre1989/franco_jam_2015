@@ -17,9 +17,10 @@ public class Player : MonoBehaviour
     public KeyCode m_rockKey;
     public KeyCode m_paperKey;
     public KeyCode m_scissorsKey;
+    public KeyCode m_pizzaKey;
 
     //MAGIC
-    public enum state { rock, paper, scissors, none };
+    public enum state { rock, paper, scissors, none, pizza };
     private state m_state;
     private GameObject m_magic;
 
@@ -65,12 +66,12 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(m_runKey))
         {
-            m_speed = m_speed*3;
+            m_speed = 15;
         }
 
         if (Input.GetKeyUp(m_runKey))
         {
-            m_speed = m_speed/3;
+            m_speed = 5;
         }
 
         if (Input.GetKey(m_LeftKey))
@@ -104,15 +105,12 @@ public class Player : MonoBehaviour
         m_playerRigidbody.MovePosition(transform.position + movement);
         m_playerRigidbody.AddForce(force);
         m_playerRigidbody.AddForce(bounce);
-        if (m_state != state.none) { m_magic.transform.position = m_playerRigidbody.transform.position; }
+        if ((int)m_state < 3) { m_magic.transform.position = m_playerRigidbody.transform.position; }
 
     }
 
     void Fire()
     {
-        //Firing
-        if (Input.GetKey(m_rockKey)) {/*CHARGE*/}
-
         /*ROCK*/
         if (Input.GetKey(m_rockKey) && m_state != state.rock)
         {
@@ -173,6 +171,18 @@ public class Player : MonoBehaviour
         {
             m_state = state.none;
             DestroyObject(m_magic);
+        }
+
+        /*PIZZA!*/
+        if (Input.GetKey(m_pizzaKey) && m_state != state.pizza)
+        {
+            m_state = state.pizza;
+
+        }
+
+        if (Input.GetKeyUp(m_pizzaKey))
+        {
+            m_state = state.none;
         }
     }
 

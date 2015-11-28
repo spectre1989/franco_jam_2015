@@ -51,6 +51,7 @@
      <Compile Include="Assets\code\TestPlayer.cs" />
      <Compile Include="Assets\scripts\Magic.cs" />
      <Compile Include="Assets\scripts\Monster.cs" />
+     <Compile Include="Assets\scripts\Pizza.cs" />
      <Compile Include="Assets\scripts\Player.cs" />
      <None Include="Assets\materials\fx_shield.shader" />
  <Reference Include="UnityEngine.UI">

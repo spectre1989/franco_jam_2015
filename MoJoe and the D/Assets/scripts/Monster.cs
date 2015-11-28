@@ -2,6 +2,9 @@
 using System.Collections;
 
 public class Monster : MonoBehaviour {
+    float m_timeLeft;
+    float m_increment;
+
 
 	// Use this for initialization
 	void Start () {
