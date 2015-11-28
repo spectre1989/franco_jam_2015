@@ -113,11 +113,28 @@ public class MenuGUI : MonoBehaviour
 
         public override void OnGUI()
         {
-            if (this.networkManager.isNetworkActive)
+            if (this.networkManager.client != null && this.networkManager.client.isConnected)
             {
-                if (this.networkManager.numPlayers < 3)
+                switch (GameInfo.Instance.CurrentState)
                 {
-                    GUILayout.Label(String.Format("Waiting for players - {0}/3", this.networkManager.numPlayers));
+                    case GameInfo.State.WaitingForPlayers:
+                        GUILayout.Label(String.Format("Waiting for players - {0}/3", GameInfo.Instance.NumPlayers));
+                        break;
+
+                    case GameInfo.State.Countdown:
+                        GUILayout.Label(String.Format("STARTING IN {0}", Mathf.CeilToInt(GameInfo.Instance.Countdown)));
+                        break;
+
+                    case GameInfo.State.InGame:
+                        int seconds = Mathf.CeilToInt(GameInfo.Instance.GameTimer);
+                        int minutes = seconds / 60;
+                        seconds = seconds % 60;
+                        GUILayout.Label(String.Format("{0}:{1:00}", minutes, seconds));
+                        break;
+
+                    case GameInfo.State.EndOfGame:
+                        
+                        break;
                 }
             }
         }
@@ -132,9 +149,7 @@ public class MenuGUI : MonoBehaviour
 
         public override void OnGUI()
         {
-            base.OnGUI();
-
-            if (this.networkManager.isNetworkActive == false)
+            if (this.networkManager.client == null || this.networkManager.client.isConnected == false)
             {
                 GUILayout.Label("Host has disconnected");
                 if (GUILayout.Button("Back", GUILayout.Width(100)))
@@ -144,16 +159,20 @@ public class MenuGUI : MonoBehaviour
             }
             else
             {
-                GUILayout.Label("Connected :)");
                 if (GUILayout.Button("Disconnect", GUILayout.Width(100)))
                 {
+                    this.networkManager.StopClient();
                     this.nextState = new JoinOrHostState(this.networkManager);
                 }
             }
+
+            GUILayout.Space(20);
+
+            base.OnGUI();
         }
     }
 
-    private class HostInGameState : State
+    private class HostInGameState : InGameState
     {
         public HostInGameState(CustomNetworkManager networkManager)
             : base(networkManager)
@@ -162,8 +181,6 @@ public class MenuGUI : MonoBehaviour
 
         public override void OnGUI()
         {
-            base.OnGUI();
-
             IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (IPAddress ip in host.AddressList)
             {
@@ -172,6 +189,16 @@ public class MenuGUI : MonoBehaviour
                     GUILayout.Label("Your IP is: " + ip);
                 }
             }
+
+            if (GUILayout.Button("Stop Hosting", GUILayout.Width(100)))
+            {
+                this.networkManager.StopHost();
+                this.nextState = new JoinOrHostState(this.networkManager);
+            }
+
+            GUILayout.Space(20);
+
+            base.OnGUI();
         }
     }
 }
