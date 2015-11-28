@@ -1,0 +1,186 @@
+fileFormatVersion: 2
+guid: 2ed58a13cf895e94e937e9f3aa96f0dc
+timeCreated: 1448727923
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: arm_bone_left
+    100002: arm_bone_right
+    100004: Bone002
+    100006: Bone003
+    100008: Bone004
+    100010: Bone005
+    100012: Bone006
+    100014: Bone007
+    100016: Bone008
+    100018: Bone010
+    100020: Bone011
+    100022: Bone012
+    100024: Bone013
+    100026: Bone015
+    100028: Bone016
+    100030: Bone017
+    100032: Bone018
+    100034: Bone019
+    100036: Bone020
+    100038: Bone021
+    100040: Bone023
+    100042: Bone024
+    100044: Bone025
+    100046: Bone027
+    100048: Bone028
+    100050: Bone029
+    100052: //RootNode
+    100054: monster_arm_left
+    100056: monster_arm_left001
+    100058: monster_body
+    100060: monster_teeth
+    100062: monster_tooth_1
+    100064: monster_tooth_2
+    100066: monster_tooth_3
+    100068: monster_tooth_4
+    100070: monster_tooth_5
+    100072: monster_tooth_6
+    100074: mouth_bone_left
+    100076: mouth_bone_right
+    100078: Sphere001
+    100080: tongue
+    100082: tongue_bone
+    400000: arm_bone_left
+    400002: arm_bone_right
+    400004: Bone002
+    400006: Bone003
+    400008: Bone004
+    400010: Bone005
+    400012: Bone006
+    400014: Bone007
+    400016: Bone008
+    400018: Bone010
+    400020: Bone011
+    400022: Bone012
+    400024: Bone013
+    400026: Bone015
+    400028: Bone016
+    400030: Bone017
+    400032: Bone018
+    400034: Bone019
+    400036: Bone020
+    400038: Bone021
+    400040: Bone023
+    400042: Bone024
+    400044: Bone025
+    400046: Bone027
+    400048: Bone028
+    400050: Bone029
+    400052: //RootNode
+    400054: monster_arm_left
+    400056: monster_arm_left001
+    400058: monster_body
+    400060: monster_teeth
+    400062: monster_tooth_1
+    400064: monster_tooth_2
+    400066: monster_tooth_3
+    400068: monster_tooth_4
+    400070: monster_tooth_5
+    400072: monster_tooth_6
+    400074: mouth_bone_left
+    400076: mouth_bone_right
+    400078: Sphere001
+    400080: tongue
+    400082: tongue_bone
+    2300000: monster_tooth_1
+    2300002: monster_tooth_2
+    2300004: monster_tooth_3
+    2300006: monster_tooth_4
+    2300008: monster_tooth_5
+    2300010: monster_tooth_6
+    2300012: Sphere001
+    3300000: monster_tooth_1
+    3300002: monster_tooth_2
+    3300004: monster_tooth_3
+    3300006: monster_tooth_4
+    3300008: monster_tooth_5
+    3300010: monster_tooth_6
+    3300012: Sphere001
+    4300000: Sphere001
+    4300002: monster_body
+    4300004: monster_tooth_3
+    4300006: monster_tooth_4
+    4300008: monster_tooth_5
+    4300010: monster_tooth_6
+    4300012: monster_tooth_1
+    4300014: monster_tooth_2
+    4300016: tongue
+    4300018: monster_arm_left
+    4300020: monster_arm_left001
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: monster_arm_left
+    13700002: monster_arm_left001
+    13700004: monster_body
+    13700006: tongue
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

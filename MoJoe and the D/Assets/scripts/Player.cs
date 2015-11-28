@@ -1,23 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Player : MonoBehaviour 
+public class Player : MonoBehaviour
 {
     //MOVING
-    public float m_startPos;
-	public float m_speed;
-	public float m_jumpSpeed;
-	Rigidbody m_playerRigidbody;
+    private Vector3 m_startPos;
+    public float m_speed;
+    public float m_jumpSpeed;
+    public float m_bounceForce;
+    Rigidbody m_playerRigidbody;
 
     public KeyCode m_LeftKey;
     public KeyCode m_rightKey;
     public KeyCode m_jumpKey;
+    public KeyCode m_runKey;
     public KeyCode m_rockKey;
     public KeyCode m_paperKey;
     public KeyCode m_scissorsKey;
 
     //MAGIC
-    public enum state {rock, paper, scissors,none};
+    public enum state { rock, paper, scissors, none };
     private state m_state;
     private GameObject m_magic;
 
@@ -31,82 +33,88 @@ public class Player : MonoBehaviour
     private int m_points;
 
     // Use this for initialization
-    void Start () 
-	{
-		m_playerRigidbody = GetComponent <Rigidbody> ();
+    void Start()
+    {
+        m_playerRigidbody = GetComponent<Rigidbody>();
         m_state = state.none;
-	}
+
+        m_startPos = m_playerRigidbody.position;
+    }
 
     // Update is called once per frame
     void Update()
     {
-        Fire ();
+        Fire();
         checkCollisions();
     }
 
     //Fixed update for rigid body
-    void FixedUpdate () 
-	{
-		Move ();
-	}
-		
-	void Move ()
-	{
-		// Set the movement vector based on the input.
-		Vector3 force = new Vector3 ();
-		Vector3 movement = new Vector3 ();
+    void FixedUpdate()
+    {
+        Move();
+    }
+
+    void Move()
+    {
+        // Set the movement vector based on the input.
+        Vector3 force = new Vector3();
+        Vector3 bounce = new Vector3();
+        Vector3 movement = new Vector3();
         Quaternion rotation = new Quaternion();
-       
+        bool grounded;
+
+        if (Input.GetKeyDown(m_runKey))
+        {
+            m_speed = m_speed*3;
+        }
+
+        if (Input.GetKeyUp(m_runKey))
+        {
+            m_speed = m_speed/3;
+        }
+
         if (Input.GetKey(m_LeftKey))
         {
-            movement += new Vector3(-1.0f,0,0);
-            bool grounded = Physics.Linecast(transform.position, transform.position - new Vector3(0, 0.4f, 0));
-            if (grounded) { m_playerRigidbody.AddForce(new Vector3(0, 2000, 0));}
+            grounded = Physics.Linecast(transform.position, transform.position - new Vector3(0, 0.4f, 0));
+            movement += new Vector3(-1.0f, 0, 0);
+            if (grounded) { bounce += new Vector3(0, 1.0f, 0); }
             rotation = Quaternion.Euler(new Vector3(0.0f, -90.0f, 0.0f));
             m_playerRigidbody.MoveRotation(rotation);
         }
 
         if (Input.GetKey(m_rightKey))
         {
-            movement += new Vector3(1.0f,0,0);
-            bool grounded = Physics.Linecast(transform.position, transform.position - new Vector3(0, 0.4f, 0));
-            if (grounded) { m_playerRigidbody.AddForce(new Vector3(0, 2000, 0));}
+            movement += new Vector3(1.0f, 0, 0);
+            grounded = Physics.Linecast(transform.position, transform.position - new Vector3(0, 0.4f, 0));
+            if (grounded) { bounce += new Vector3(0, 1.0f, 0); }
             rotation = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f));
             m_playerRigidbody.MoveRotation(rotation);
         }
 
         if (Input.GetKeyDown(m_jumpKey))
         {
-            bool grounded = Physics.Linecast(transform.position, transform.position - new Vector3(0, 1.0f, 0));
-            if (grounded) { force += new Vector3(0, 1.0f, 0); }
+            force += new Vector3(0, 1.0f, 0);
         }
 
-        if (Input.anyKey == false && Physics.Linecast(transform.position, transform.position - new Vector3(0, 0.4f, 0)))
-        {
-            m_playerRigidbody.velocity *= 0.5f;
-        }
-		
-		// Normalise the movement vector and make it proportional to the speed per second.
-		movement = movement.normalized * m_speed * Time.deltaTime;
-		force = force.normalized * m_jumpSpeed;
-
+        // Normalise the movement vector and make it proportional to the speed per second.
+        movement = movement.normalized * m_speed * Time.deltaTime;
+        force = force.normalized * m_jumpSpeed;
+        bounce = bounce.normalized * m_bounceForce;
         // Move the player to it's current position plus the movement.
         m_playerRigidbody.MovePosition(transform.position + movement);
-        m_playerRigidbody.AddForce (force);
-        if (m_state!=state.none) {m_magic.transform.position = m_playerRigidbody.transform.position;}
+        m_playerRigidbody.AddForce(force);
+        m_playerRigidbody.AddForce(bounce);
+        if (m_state != state.none) { m_magic.transform.position = m_playerRigidbody.transform.position; }
 
-        //make sure never any angular velociy or z motion
-        m_playerRigidbody.angularVelocity = new Vector3();
-        m_playerRigidbody.position.Set(m_playerRigidbody.position.x, m_playerRigidbody.position.y, 0);
     }
 
-	void Fire()
-	{
-		//Firing
-		if (Input.GetKey (m_rockKey)) {/*CHARGE*/}
+    void Fire()
+    {
+        //Firing
+        if (Input.GetKey(m_rockKey)) {/*CHARGE*/}
 
         /*ROCK*/
-        if (Input.GetKey(m_rockKey) && m_state!=state.rock)
+        if (Input.GetKey(m_rockKey) && m_state != state.rock)
         {
             m_state = state.rock;
             Color colour = new Color(0, 0.87f, 1);
@@ -170,12 +178,17 @@ public class Player : MonoBehaviour
 
     void checkCollisions()
     {
-        
+
     }
 
     public state getState()
     {
         return m_state;
+    }
+
+    public Vector3 getStartPos()
+    {
+        return m_startPos;
     }
 
 }

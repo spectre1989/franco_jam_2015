@@ -1,23 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Magic : MonoBehaviour {
+public class Magic : MonoBehaviour
+{
     Player.state[] canKill = new Player.state[] { Player.state.scissors, Player.state.rock, Player.state.paper };
 
     //Casters variables
     public GameObject m_magicker;
     public Player.state m_playerState;
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start()
     {
-	}
+    }
 
     // Update is called once per frame
-    void Update ()
+    void Update()
     {
-        
-	}
+
+    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -29,7 +30,7 @@ public class Magic : MonoBehaviour {
             {
                 /* KILL */
                 Debug.Log("THEIR STATE:" + otherPlayerState + "OUR STATE:" + m_playerState);
-                other.transform.position = new Vector3(0, 10, 0);
+                other.transform.position = other.gameObject.GetComponent<Player>().getStartPos();
             }
 
             else if (otherPlayerState == m_playerState)
