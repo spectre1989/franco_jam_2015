@@ -17,9 +17,10 @@ public class Player : MonoBehaviour
     public KeyCode m_rockKey;
     public KeyCode m_paperKey;
     public KeyCode m_scissorsKey;
+    public KeyCode m_pizzaKey;
 
     //MAGIC
-    public enum state { rock, paper, scissors, none };
+    public enum state { rock, paper, scissors, none, pizza };
     private state m_state;
     private GameObject m_magic;
 
@@ -30,6 +31,7 @@ public class Player : MonoBehaviour
     private float nextMagic;
 
     //POINTS
+    private GameObject m_item;
     private int m_points;
 
     // Use this for initialization
@@ -45,7 +47,6 @@ public class Player : MonoBehaviour
     void Update()
     {
         Fire();
-        checkCollisions();
     }
 
     //Fixed update for rigid body
@@ -65,12 +66,12 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(m_runKey))
         {
-            m_speed = m_speed*3;
+            m_speed = 15;
         }
 
         if (Input.GetKeyUp(m_runKey))
         {
-            m_speed = m_speed/3;
+            m_speed = 5;
         }
 
         if (Input.GetKey(m_LeftKey))
@@ -104,15 +105,12 @@ public class Player : MonoBehaviour
         m_playerRigidbody.MovePosition(transform.position + movement);
         m_playerRigidbody.AddForce(force);
         m_playerRigidbody.AddForce(bounce);
-        if (m_state != state.none) { m_magic.transform.position = m_playerRigidbody.transform.position; }
+        if ((int)m_state < 3) { m_magic.transform.position = m_playerRigidbody.transform.position; }
 
     }
 
     void Fire()
     {
-        //Firing
-        if (Input.GetKey(m_rockKey)) {/*CHARGE*/}
-
         /*ROCK*/
         if (Input.GetKey(m_rockKey) && m_state != state.rock)
         {
@@ -174,16 +172,41 @@ public class Player : MonoBehaviour
             m_state = state.none;
             DestroyObject(m_magic);
         }
+
+        /*PIZZA!*/
+        if (Input.GetKey(m_pizzaKey) && m_state != state.pizza)
+        {
+            m_state = state.pizza;
+        }
+
+        if (Input.GetKeyUp(m_pizzaKey))
+        {
+            if (m_item != null)
+            {
+                m_item.transform.position = m_playerRigidbody.position + new Vector3(1.0f, 2.0f, 0);
+                m_item.SetActive(true);
+                m_item = null;
+            }
+            m_state = state.none;
+        }
     }
 
-    void checkCollisions()
+    void OnTriggerStay(Collider other)
     {
-
+        if (other.gameObject.CompareTag("Item") && m_state == state.pizza)
+        {
+            m_item = other.gameObject;
+            other.gameObject.SetActive(false);
+        }
     }
 
     public state getState()
     {
         return m_state;
+    }
+    public void setState(state _state)
+    {
+        m_state = _state;
     }
 
     public Vector3 getStartPos()
@@ -191,4 +214,20 @@ public class Player : MonoBehaviour
         return m_startPos;
     }
 
+    public GameObject getItem()
+    {
+        return m_item;
+    }
+
+    public void resetItem()
+    {
+        m_item.transform.position = m_item.GetComponent<Pizza>().getStartPos();
+        m_item.SetActive(true);
+        m_item = null;
+        m_state = state.none;
+    }
+
+    public int getPoints() { return m_points; }
+    public void addPoints(int _points) { m_points += _points; }
+    public void removePoints(int _points) { m_points -= _points; }
 }

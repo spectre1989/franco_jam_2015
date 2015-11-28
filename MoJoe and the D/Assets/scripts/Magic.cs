@@ -22,10 +22,10 @@ public class Magic : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player" && other.gameObject != m_magicker)
+        if (other.gameObject.CompareTag("Player") && other.gameObject != m_magicker)
         {
             Player.state otherPlayerState = other.GetComponent<Player>().getState();
-
+ 
             if (otherPlayerState == canKill[(int)m_playerState] || otherPlayerState == Player.state.none)
             {
                 /* KILL */
@@ -37,6 +37,9 @@ public class Magic : MonoBehaviour
             {
                 // bounce
                 Debug.Log("BOUNCE!! THEIR STATE:" + otherPlayerState + "OUR STATE:" + m_playerState);
+                Vector3 centroid = (other.transform.position + m_magicker.transform.position - new Vector3(0, 1, 0)) / 2.0f;
+                other.gameObject.GetComponent<Rigidbody>().AddExplosionForce(25000.0f, centroid, 1.0f);
+                m_magicker.GetComponent<Rigidbody>().AddExplosionForce(25000.0f, centroid, 1.0f);
             }
         }
     }

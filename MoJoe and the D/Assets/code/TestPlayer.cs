@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Networking.NetworkSystem;
 using System;
-using System.Collections.Generic;
 
 public class TestPlayer : NetworkBehaviour
 {
@@ -34,57 +32,28 @@ public class TestPlayer : NetworkBehaviour
     [SerializeField]
     private float sendInterval;
     [SerializeField]
-    private float lerpDelay;
+    private float networkSmoothing;
     [SerializeField]
     private TextMesh nameTextMesh;
 
     // Game stuff
-    private enum MagicType
+    private enum Magic
     {
         None = 0,
         Rock = 1,
         Paper = 2,
-        Scissors = 3
+        Scissors = 4
     }
-    private static MagicType[] CreateKillTable()
-    {
-        MagicType[] killTable = new MagicType[4];
-        killTable[(int)MagicType.None] = (MagicType)(-1);
-        killTable[(int)MagicType.Rock] = MagicType.Scissors;
-        killTable[(int)MagicType.Paper] = MagicType.Rock;
-        killTable[(int)MagicType.Scissors] = MagicType.Paper;
-
-        return killTable;
-    }
-    private static MagicType[] killTable = CreateKillTable();
 
     private Rigidbody rigidbody;
     private Material material;
-    private MagicType magic;
+    private Magic magic;
 
-    // Network stuff
-    struct SynchedPosition
-    {
-        public float t;
-        public Vector3 position;
-
-        public SynchedPosition(float t, Vector3 position)
-        {
-            this.t = t;
-            this.position = position;
-        }
-    }
-
-    [SyncVar(hook="OnSynchName")]
+    // Network stuff - Set Once
     private String synchedName;
-    [SyncVar(hook = "OnSynchPosition")]
-    private SynchedPosition synchedPosition;
-    private Queue<SynchedPosition> synchedPositions = new Queue<SynchedPosition>();
-    private SynchedPosition interpolateFromSynchedPosition;
-    private float targetLerpTime;
-
+    // Network Stuff - Continuous
     [SyncVar]
-    private MagicType synchedMagic;
+    private Vector3 synchedPosition;
 
     private void Start()
     {
@@ -98,8 +67,6 @@ public class TestPlayer : NetworkBehaviour
         {
             // For non-local player, set as kinematic so position is just network synchronised
             this.rigidbody.isKinematic = true;
-            this.interpolateFromSynchedPosition.position = this.transform.position;
-            this.nameTextMesh.text = this.synchedName;
         }
 
         Renderer renderer = this.GetComponent<Renderer>();
@@ -153,7 +120,7 @@ public class TestPlayer : NetworkBehaviour
                 }
             }
 
-            this.CmdUpdatePosition(new SynchedPosition(Time.time, this.transform.position));
+            this.CmdUpdatePosition(this.transform.position);
         }
     }
 
@@ -161,64 +128,48 @@ public class TestPlayer : NetworkBehaviour
     {
         if (this.isLocalPlayer)
         {
-            this.magic = TestPlayer.MagicType.None;
+            int magicFlags = 0;
 
             if (Input.GetKey(this.rockKey))
             {
-                this.magic = MagicType.Rock;
+                magicFlags |= (int)Magic.Rock;
             }
-            else if (Input.GetKey(this.paperKey))
+            if (Input.GetKey(this.paperKey))
             {
-                this.magic = MagicType.Paper;
+                magicFlags |= (int)Magic.Paper;
             }
-            else if (Input.GetKey(this.scissorsKey))
+            if (Input.GetKey(this.scissorsKey))
             {
-                this.magic = MagicType.Scissors;
-            }
-
-            CmdUpdateMagic(this.magic);
-        }
-        else
-        {
-            // Interpolate position
-            while (this.synchedPositions.Count > 0 && this.synchedPositions.Peek().t <= this.targetLerpTime)
-            {
-                this.interpolateFromSynchedPosition = this.synchedPositions.Dequeue();
+                magicFlags |= (int)Magic.Scissors;
             }
 
-            if (this.synchedPositions.Count > 0)
+            // multiple buttons = NOTHING!
+            if (magicFlags == (int)Magic.Rock)
             {
-                float t = Mathf.InverseLerp(this.interpolateFromSynchedPosition.t, this.synchedPositions.Peek().t, this.targetLerpTime);
-                this.transform.position = Vector3.Lerp(this.interpolateFromSynchedPosition.position, this.synchedPositions.Peek().position, t);
+                this.magic = Magic.Rock;
+                this.material.color = this.rockColour;
+            }
+            else if (magicFlags == (int)Magic.Paper)
+            {
+                this.magic = Magic.Paper;
+                this.material.color = this.paperColour;
+            }
+            else if (magicFlags == (int)Magic.Scissors)
+            {
+                this.magic = Magic.Scissors;
+                this.material.color = this.scissorsColour;
             }
             else
             {
-                this.transform.position = this.interpolateFromSynchedPosition.position;
-            }
-
-            this.targetLerpTime += Time.deltaTime;
-
-            // Magic
-            this.magic = this.synchedMagic;
-        }
-
-        switch (this.magic)
-        {
-            case MagicType.None:
+                this.magic = Magic.None;
                 this.material.color = Color.white;
-                break;
-
-            case MagicType.Paper:
-                this.material.color = this.paperColour;
-                break;
-
-            case MagicType.Rock:
-                this.material.color = this.rockColour;
-                break;
-
-            case MagicType.Scissors:
-                this.material.color = this.scissorsColour;
-                break;
+            }
+        }
+        else
+        {
+            Vector3 toTarget = this.synchedPosition - this.transform.position;
+            float smoothing = Mathf.Min(this.networkSmoothing * Time.deltaTime, 1.0f);
+            this.transform.position += toTarget * smoothing;
         }
     }
 
@@ -226,89 +177,27 @@ public class TestPlayer : NetworkBehaviour
     {
         if(this.isLocalPlayer == false)
         {
-            foreach (SynchedPosition synchedPosition in this.synchedPositions)
-            {
-                Gizmos.DrawSphere(synchedPosition.position, 0.2f);
-            }
+            Gizmos.DrawSphere(this.synchedPosition, 0.2f);
         }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        TestPlayer otherPlayer = collision.gameObject.GetComponent<TestPlayer>();
-
-        if (otherPlayer == null)
-        {
-            return;
-        }
-
-        if (this.magic != MagicType.None)
-        {
-            bool kill = otherPlayer.magic == MagicType.None;
-            if (kill == false)
-            {
-                // See if we have the corresponding magic type to kill the opponent
-                kill = otherPlayer.magic == TestPlayer.killTable[(int)this.magic];
-            }
-
-            if (kill)
-            {
-                this.CmdKill(otherPlayer.netId);
-            }
-        }
-    }
-
-    private void OnSynchName(String name)
-    {
-        this.nameTextMesh.text = name;
-    }
-
-    private void OnSynchPosition(SynchedPosition position)
-    {
-        if (this.isLocalPlayer == false)
-        {
-            this.synchedPositions.Enqueue(position);
-        }
-
-        this.targetLerpTime = position.t - this.lerpDelay;
     }
 
     [Command]
     private void CmdSetPlayerName(String name)
     {
         this.synchedName = name;
+        this.RpcSetPlayerName(name);
     }
 
     [Command]
-    private void CmdUpdatePosition(SynchedPosition position)
+    private void CmdUpdatePosition(Vector3 position)
     {
         this.synchedPosition = position;
     }
 
-    [Command]
-    private void CmdUpdateMagic(MagicType magic)
-    {
-        this.synchedMagic = magic;
-    }
-
-    [Command]
-    private void CmdKill(NetworkInstanceId netId)
-    {
-        GameObject playerGameObject = NetworkServer.FindLocalObject(netId);
-        if (playerGameObject != null)
-        {
-            TestPlayer player = playerGameObject.GetComponent<TestPlayer>();
-            player.RpcKill();
-        }
-    }
-
     [ClientRpc]
-    private void RpcKill()
+    private void RpcSetPlayerName(String name)
     {
-        if (this.isLocalPlayer)
-        {
-            this.rigidbody.velocity = new Vector3();
-            this.transform.position = NetworkManager.singleton.startPositions[UnityEngine.Random.Range(0, NetworkManager.singleton.startPositions.Count)].position;
-        }
+        this.synchedName = name;
+        this.nameTextMesh.text = name;
     }
 }
