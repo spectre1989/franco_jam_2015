@@ -54,7 +54,7 @@ public class MenuGUI : MonoBehaviour
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label("Player Name:");
-            this.networkManager.playerName = GUILayout.TextField(this.networkManager.playerName, GUILayout.Width(150));
+            this.networkManager.playerName = GUILayout.TextField(this.networkManager.playerName, 20, GUILayout.Width(150));
             GUILayout.EndHorizontal();
 
             GUILayout.Space(20);
@@ -105,7 +105,25 @@ public class MenuGUI : MonoBehaviour
         }
     }
 
-    private class ClientInGameState : State
+    private class InGameState : State
+    {
+        public InGameState(CustomNetworkManager networkManager)
+            : base(networkManager)
+        {}
+
+        public override void OnGUI()
+        {
+            if (this.networkManager.isNetworkActive)
+            {
+                if (this.networkManager.numPlayers < 3)
+                {
+                    GUILayout.Label(String.Format("Waiting for players - {0}/3", this.networkManager.numPlayers));
+                }
+            }
+        }
+    }
+
+    private class ClientInGameState : InGameState
     {
         public ClientInGameState(CustomNetworkManager networkManager)
             : base(networkManager)
@@ -114,7 +132,24 @@ public class MenuGUI : MonoBehaviour
 
         public override void OnGUI()
         {
-            GUILayout.Label("connected");
+            base.OnGUI();
+
+            if (this.networkManager.isNetworkActive == false)
+            {
+                GUILayout.Label("Host has disconnected");
+                if (GUILayout.Button("Back", GUILayout.Width(100)))
+                {
+                    this.nextState = new JoinOrHostState(this.networkManager);
+                }
+            }
+            else
+            {
+                GUILayout.Label("Connected :)");
+                if (GUILayout.Button("Disconnect", GUILayout.Width(100)))
+                {
+                    this.nextState = new JoinOrHostState(this.networkManager);
+                }
+            }
         }
     }
 
@@ -127,7 +162,7 @@ public class MenuGUI : MonoBehaviour
 
         public override void OnGUI()
         {
-            GUILayout.Label("hosting");
+            base.OnGUI();
 
             IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (IPAddress ip in host.AddressList)

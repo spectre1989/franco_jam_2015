@@ -226,7 +226,7 @@ MonoBehaviour:
   jumpImpulse: 7
   groundedRayLength: .5
   sendInterval: .0299999993
-  networkSmoothing: 10
+  lerpDelay: .100000001
   nameTextMesh: {fileID: 10214530}
 --- !u!1001 &100100000
 Prefab:
@@ -387,6 +387,14 @@ Prefab:
       propertyPath: nameTextMesh
       value: 
       objectReference: {fileID: 10214530}
+    - target: {fileID: 0}
+      propertyPath: targetBufferSize
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: lerpDelay
+      value: .100000001
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 173428}
