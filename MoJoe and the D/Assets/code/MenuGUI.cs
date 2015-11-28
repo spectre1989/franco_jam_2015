@@ -15,20 +15,25 @@ public class MenuGUI : MonoBehaviour
         this.state = new JoinOrHostState(this.networkManager);
     }
 
+    private void Update()
+    {
+        if (this.state.NextState != null)
+        {
+            this.state = this.state.NextState;
+        }
+
+        this.state.Update();
+    }
+
     private void OnGUI()
     {
         if (this.state != null)
         {
-            if (this.state.NextState != null)
-            {
-                this.state = this.state.NextState;
-            }
-
             this.state.OnGUI();
         }
     }
 
-    private class State
+    private abstract class State
     {
         protected CustomNetworkManager networkManager = null;
         protected State nextState = null;
@@ -40,7 +45,8 @@ public class MenuGUI : MonoBehaviour
             this.networkManager = networkManager;
         }
 
-        public virtual void OnGUI() { }
+        public abstract void Update();
+        public abstract void OnGUI();
     }
 
     private class JoinOrHostState : State
@@ -61,6 +67,7 @@ public class MenuGUI : MonoBehaviour
 
             if (GUILayout.Button("Host Game", GUILayout.Width(100)))
             {
+                GameInfo.Instance.Init();
                 this.networkManager.StartHost();
                 this.nextState = new HostInGameState(this.networkManager);
             }
@@ -75,6 +82,10 @@ public class MenuGUI : MonoBehaviour
                 this.nextState = new WaitForJoinGameState(this.networkManager);
             }
             GUILayout.EndHorizontal();
+        }
+
+        public override void Update()
+        {
         }
     }
 
@@ -91,6 +102,8 @@ public class MenuGUI : MonoBehaviour
             {
                 if (this.networkManager.IsClientConnected())
                 {
+                    //ClientScene.Ready(this.networkManager.client.connection);
+                    ClientScene.AddPlayer(0);
                     this.nextState = new ClientInGameState(this.networkManager);
                 }
             }
@@ -103,17 +116,29 @@ public class MenuGUI : MonoBehaviour
                 }
             }
         }
+
+        public override void Update()
+        {
+            
+        }
     }
 
     private class InGameState : State
     {
+        protected bool isClientConnected = false;
+
         public InGameState(CustomNetworkManager networkManager)
             : base(networkManager)
         {}
 
+        public override void Update()
+        {
+            this.isClientConnected = this.networkManager.client != null && this.networkManager.client.isConnected;
+        }
+
         public override void OnGUI()
         {
-            if (this.networkManager.client != null && this.networkManager.client.isConnected)
+            if (this.isClientConnected)
             {
                 switch (GameInfo.Instance.CurrentState)
                 {
@@ -149,7 +174,7 @@ public class MenuGUI : MonoBehaviour
 
         public override void OnGUI()
         {
-            if (this.networkManager.client == null || this.networkManager.client.isConnected == false)
+            if (this.isClientConnected == false)
             {
                 GUILayout.Label("Host has disconnected");
                 if (GUILayout.Button("Back", GUILayout.Width(100)))
@@ -181,24 +206,35 @@ public class MenuGUI : MonoBehaviour
 
         public override void OnGUI()
         {
-            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (IPAddress ip in host.AddressList)
+            if (NetworkServer.active)
             {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+                foreach (IPAddress ip in host.AddressList)
                 {
-                    GUILayout.Label("Your IP is: " + ip);
+                    if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        GUILayout.Label("Your IP is: " + ip);
+                    }
+                }
+
+                if (GUILayout.Button("Stop Hosting", GUILayout.Width(100)))
+                {
+                    this.networkManager.StopHost();
+                    this.nextState = new JoinOrHostState(this.networkManager);
+                }
+
+                GUILayout.Space(20);
+
+                base.OnGUI();
+            }
+            else
+            {
+                GUILayout.Label("Hosting failed, are you already hosting in another instance?");
+                if (GUILayout.Button("Back", GUILayout.Width(100)))
+                {
+                    this.nextState = new JoinOrHostState(this.networkManager);
                 }
             }
-
-            if (GUILayout.Button("Stop Hosting", GUILayout.Width(100)))
-            {
-                this.networkManager.StopHost();
-                this.nextState = new JoinOrHostState(this.networkManager);
-            }
-
-            GUILayout.Space(20);
-
-            base.OnGUI();
         }
     }
 }

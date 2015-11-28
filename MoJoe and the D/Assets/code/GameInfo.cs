@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using System.Collections.Generic;
+using System;
 
 public class GameInfo : NetworkBehaviour
 {
@@ -14,12 +16,28 @@ public class GameInfo : NetworkBehaviour
         EndOfGame
     }
 
+    public struct PlayerInfo
+    {
+        public String name;
+        public int score;
+    }
+    public class SyncListPlayerInfo : SyncListStruct<PlayerInfo>
+    {}
+
+    private struct RespawnRequest
+    {
+        public NetworkConnection networkConnection;
+        public float time;
+    }
+
     [SerializeField]
     private float countdownLength;
     [SerializeField]
     private float gameLength;
     [SerializeField]
     private float endOfGameLength;
+    [SerializeField]
+    private float respawnTime;
 
     [SyncVar]
     private State currentState;
@@ -32,6 +50,8 @@ public class GameInfo : NetworkBehaviour
     [SyncVar]
     private int numPlayers;
 
+    private Queue<RespawnRequest> respawnQueue;
+
     public State CurrentState { get { return this.currentState; } }
     public float Countdown { get { return this.countdownTimer; } }
     public float GameTimer { get { return this.gameTimer; } }
@@ -42,7 +62,7 @@ public class GameInfo : NetworkBehaviour
         GameInfo.intance = this;
         this.currentState = State.WaitingForPlayers;
     }
-
+    
     private void Update()
     {
         if (this.isServer)
@@ -50,7 +70,7 @@ public class GameInfo : NetworkBehaviour
             switch (this.currentState)
             {
                 case State.WaitingForPlayers:
-                    this.numPlayers = NetworkManager.singleton.numPlayers;
+                    this.numPlayers = this.NumConnectedPlayers;
                     if (this.numPlayers == 3)
                     {
                         this.EnterState(State.Countdown);
@@ -60,7 +80,7 @@ public class GameInfo : NetworkBehaviour
 
                 case State.Countdown:
                     {
-                        if (NetworkManager.singleton.numPlayers < 3)
+                        if (this.NumConnectedPlayers < 3)
                         {
                             this.EnterState(State.WaitingForPlayers);
                             return;
@@ -81,6 +101,14 @@ public class GameInfo : NetworkBehaviour
                         {
                             this.EnterState(State.EndOfGame);
                         }
+
+                        while (this.respawnQueue.Count > 0 && this.respawnQueue.Peek().time <= Time.time)
+                        {
+                            GameObject player = Instantiate(NetworkManager.singleton.playerPrefab) as GameObject;
+                            player.transform.position = NetworkManager.singleton.startPositions[UnityEngine.Random.Range(0, NetworkManager.singleton.startPositions.Count)].position;
+                            NetworkServer.AddPlayerForConnection(this.respawnQueue.Peek().networkConnection, player, 0);
+                            this.respawnQueue.Dequeue();
+                        }
                     }
                     break;
 
@@ -97,6 +125,11 @@ public class GameInfo : NetworkBehaviour
         }
     }
 
+    public void Init()
+    {
+        this.EnterState(State.WaitingForPlayers);
+    }
+
     private void EnterState(State state)
     {
         this.currentState = state;
@@ -108,12 +141,56 @@ public class GameInfo : NetworkBehaviour
                 break;
 
             case State.InGame:
+                this.respawnQueue = new Queue<RespawnRequest>();
                 this.gameTimer = this.gameLength;
+
+                List<NetworkConnection> connections = this.AllConnections;
+                for(int i = 0; i < connections.Count; ++i)
+                {
+                    GameObject player = Instantiate(NetworkManager.singleton.playerPrefab) as GameObject;
+                    player.transform.position = NetworkManager.singleton.startPositions[i % NetworkManager.singleton.startPositions.Count].position;
+                    NetworkServer.AddPlayerForConnection(connections[i], player, 0);
+                }
+
                 break;
 
             case State.EndOfGame:
                 this.endOfGameTimer = this.endOfGameLength;
                 break;
         }
+    }
+
+    private List<NetworkConnection> AllConnections
+    {
+        get
+        {
+            List<NetworkConnection> connections = new List<NetworkConnection>(NetworkServer.connections);
+            connections.AddRange(NetworkServer.localConnections);
+            while(connections.Remove(null));
+            return connections;
+        }
+    }
+
+    private int NumConnectedPlayers
+    {
+        get
+        {
+            int n = 0;
+
+            foreach(NetworkConnection networkConnection in this.AllConnections)
+            {
+                if (networkConnection != null && networkConnection.isReady)
+                {
+                    ++n;
+                }
+            }
+
+            return n;
+        }
+    }
+
+    public void AddToRespawnQueue(NetworkConnection connection)
+    {
+        this.respawnQueue.Enqueue(new RespawnRequest { networkConnection = connection, time = Time.time + this.respawnTime });
     }
 }
