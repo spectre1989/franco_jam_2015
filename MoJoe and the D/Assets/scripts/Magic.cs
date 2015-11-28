@@ -22,10 +22,10 @@ public class Magic : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player" && other.gameObject != m_magicker)
+        if (other.gameObject.CompareTag("Player") && other.gameObject != m_magicker)
         {
             Player.state otherPlayerState = other.GetComponent<Player>().getState();
-
+ 
             if (otherPlayerState == canKill[(int)m_playerState] || otherPlayerState == Player.state.none)
             {
                 /* KILL */
