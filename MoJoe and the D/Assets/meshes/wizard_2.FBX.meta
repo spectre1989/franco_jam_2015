@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 262c642fd6e3aac4e8e8eb03345052da
-timeCreated: 1448661113
+guid: af92a946a5567e24eac10e0a9d6bb522
+timeCreated: 1448820998
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -8,33 +8,17 @@ ModelImporter:
     100000: Body
     100002: Eye1
     100004: Eye2
-    100006: eye_bone_1
-    100008: eye_bone_2
-    100010: hat
-    100012: hat_bone_1
-    100014: hat_bone_2
-    100016: hat_bone_3
-    100018: lower_body_bone_1
-    100020: root_bone
-    100022: upper_body_bone_1
-    100024: //RootNode
-    100026: hat_buckle
-    100028: hat_strap
+    100006: hat
+    100008: hat_buckle
+    100010: hat_strap
+    100012: //RootNode
     400000: Body
     400002: Eye1
     400004: Eye2
-    400006: eye_bone_1
-    400008: eye_bone_2
-    400010: hat
-    400012: hat_bone_1
-    400014: hat_bone_2
-    400016: hat_bone_3
-    400018: lower_body_bone_1
-    400020: root_bone
-    400022: upper_body_bone_1
-    400024: //RootNode
-    400026: hat_buckle
-    400028: hat_strap
+    400006: hat
+    400008: hat_buckle
+    400010: hat_strap
+    400012: //RootNode
     2300000: Body
     2300002: Eye1
     2300004: Eye2
@@ -55,10 +39,6 @@ ModelImporter:
     4300010: hat_buckle
     7400000: Take 001
     9500000: //RootNode
-    13700000: Body
-    13700002: Eye1
-    13700004: Eye2
-    13700006: hat
   materials:
     importMaterials: 1
     materialName: 0
