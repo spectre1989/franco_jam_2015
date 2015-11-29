@@ -56,6 +56,10 @@ public class PlayerMP : NetworkBehaviour
     private Vector3 cameraOffset;
     [SerializeField]
     private float cameraSmoothing;
+    [SerializeField]
+    private Vector2 cameraXRotationLimits;
+    [SerializeField]
+    private Vector2 cameraYRotationLimits;
 
     // Network stuff
     private struct SynchedPosition
@@ -126,13 +130,27 @@ public class PlayerMP : NetworkBehaviour
         }
     }
 
+    private bool isQuitting = false;
+
+    private void OnApplicationQuit()
+    {
+        this.isQuitting = true;
+    }
+
     private void OnDestroy()
     {
+        if (this.isQuitting == true)
+        {
+            return;
+        }
+
         if (this.m_magic != null)
         {
             Destroy(this.m_magic);
             this.m_magic = null;
         }
+
+        OneShotAudioClip.Create(this.transform.position, this.m_deathSound);
     }
 
     // Update is called once per frame
@@ -195,11 +213,49 @@ public class PlayerMP : NetworkBehaviour
     {
         if (this.isLocalPlayer)
         {
-            Vector3 targetPosition = this.transform.position + this.cameraOffset;
-            Vector3 toTarget = targetPosition - Camera.main.transform.position;
-            float smoothing = Mathf.Min(this.cameraSmoothing * Time.deltaTime, 1.0f);
-            Camera.main.transform.position = Camera.main.transform.position + (toTarget * smoothing);
+            //Vector3 targetPosition = this.transform.position + this.cameraOffset;
+            //Vector3 toTarget = targetPosition - Camera.main.transform.position;
+            //float smoothing = Mathf.Min(this.cameraSmoothing * Time.deltaTime, 1.0f);
+            //Camera.main.transform.position = Camera.main.transform.position + (toTarget * smoothing);
             Camera.main.transform.LookAt(this.transform.position);
+
+            Vector3 euler = Camera.main.transform.rotation.eulerAngles;
+            while (euler.x > 180)
+            {
+                euler.x -= 360;
+            }
+            while (euler.x < -180)
+            {
+                euler.x += 360;
+            }
+            while (euler.y > 180)
+            {
+                euler.y -= 360;
+            }
+            while (euler.y < -180)
+            {
+                euler.y += 350;
+            }
+
+            if (euler.x < this.cameraXRotationLimits.x)
+            {
+                euler.x = this.cameraXRotationLimits.x;
+            }
+            else if (euler.x > this.cameraXRotationLimits.y)
+            {
+                euler.x = this.cameraXRotationLimits.y;
+            }
+
+            if (euler.y < this.cameraYRotationLimits.x)
+            {
+                euler.y = this.cameraYRotationLimits.x;
+            }
+            else if (euler.y > this.cameraYRotationLimits.y)
+            {
+                euler.y = this.cameraYRotationLimits.y;
+            }
+
+            Camera.main.transform.rotation = Quaternion.Euler(euler);
         }
     }
 
@@ -429,6 +485,11 @@ public class PlayerMP : NetworkBehaviour
             CmdUpdateState(m_state);
         }
 
+        transform.Find("stone").gameObject.SetActive(false);
+        transform.Find("paper").gameObject.SetActive(false);
+        transform.Find("scissors").gameObject.SetActive(false);
+        transform.Find("pizza").gameObject.SetActive(false);
+
         switch (m_state)
         {
             case Player.state.rock:
@@ -437,8 +498,6 @@ public class PlayerMP : NetworkBehaviour
 
                     //Create magic sphere
                     DestroyObject(m_magic);
-                    transform.Find("scissors").gameObject.SetActive(false);
-                    transform.Find("paper").gameObject.SetActive(false);
 
                     m_magic = Instantiate(magicObject, magicSpawn.position, magicSpawn.rotation) as GameObject;
                     m_magic.transform.GetChild(0).GetComponent<Renderer>().material.SetColor("_Colour", colour);
@@ -458,8 +517,6 @@ public class PlayerMP : NetworkBehaviour
                     Color colour = new Color(1, 0.81f, 0);
 
                     DestroyObject(m_magic);
-                    transform.Find("scissors").gameObject.SetActive(false);
-                    transform.Find("stone").gameObject.SetActive(false);
 
                     m_magic = Instantiate(magicObject, magicSpawn.position, magicSpawn.rotation) as GameObject;
                     m_magic.transform.GetChild(0).GetComponent<Renderer>().material.SetColor("_Colour", colour);
@@ -479,8 +536,6 @@ public class PlayerMP : NetworkBehaviour
                     Color colour = new Color(1, 0, 0.6f);
 
                     DestroyObject(m_magic);
-                    transform.Find("paper").gameObject.SetActive(false);
-                    transform.Find("stone").gameObject.SetActive(false);
 
                     m_magic = Instantiate(magicObject, magicSpawn.position, magicSpawn.rotation) as GameObject;
                     m_magic.transform.GetChild(0).GetComponent<Renderer>().material.SetColor("_Colour", colour);
@@ -495,30 +550,20 @@ public class PlayerMP : NetworkBehaviour
                     break;
                 }
 
+            case Player.state.pizza:
+                Destroy(m_magic);
+
+                transform.Find("wizard_arm").gameObject.SetActive(true);
+                transform.Find("wizard_arm_2").gameObject.SetActive(true);
+
+                break;
+
             case Player.state.none:
                 DestroyObject(m_magic);
 
                 //Hide arms and rock
                 transform.Find("wizard_arm").gameObject.SetActive(false);
                 transform.Find("wizard_arm_2").gameObject.SetActive(false);
-                switch (oldState)
-                {
-                    case Player.state.rock:
-                        transform.Find("stone").gameObject.SetActive(false);
-                        break;
-
-                    case Player.state.paper:
-                        transform.Find("paper").gameObject.SetActive(false);
-                        break;
-
-                    case Player.state.scissors:
-                        transform.Find("scissors").gameObject.SetActive(false);
-                        break;
-
-                    case Player.state.pizza:
-                        transform.Find("pizza").gameObject.SetActive(false);
-                        break;
-                }
                 break;
         }
         
@@ -553,8 +598,8 @@ public class PlayerMP : NetworkBehaviour
     {
         Vector3 pizzaSpawnPos = this.transform.position + new Vector3(m_lastDir * 2, 1.0f, 0);
         this.CmdDropPizza(pizzaSpawnPos, _force);
-        
-        CmdUpdateState(m_state);
+
+        UpdateState(Player.state.none);
     }
 
     public int getPoints() { return m_points; }

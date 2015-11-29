@@ -509,7 +509,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 107826}
   m_LocalRotation: {x: -.410847813, y: .430403739, z: -.229582191, w: .770226479}
-  m_LocalPosition: {x: .898000121, y: .600000381, z: .180999875}
+  m_LocalPosition: {x: .136000007, y: .600000381, z: 1.00100005}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children:
   - {fileID: 467568}
@@ -1149,6 +1149,9 @@ MonoBehaviour:
   nameTextMesh: {fileID: 10227030}
   cameraOffset: {x: 0, y: 5, z: -30}
   cameraSmoothing: 7
+  cameraXRotationLimits: {x: -5, y: 12}
+  cameraYRotationLimits: {x: -12.1999998, y: 9.88000011}
+  synchedPlayerNum: 0
 --- !u!114 &11432134
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1515,6 +1518,26 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: cameraOffset.y
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: cameraXRotationLimits.x
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: cameraXRotationLimits.y
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: cameraYRotationLimits.x
+      value: -12.1999998
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: cameraYRotationLimits.y
+      value: 9.88000011
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

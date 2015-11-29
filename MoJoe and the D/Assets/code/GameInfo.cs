@@ -378,6 +378,11 @@ public class GameInfo : NetworkBehaviour
 
         this.gameTimer += this.timeAddedPerSliceOfPizza;
 
+        if (this.gameTimer > this.gameLength)
+        {
+            this.gameTimer = this.gameLength;
+        }
+
         this.RespawnPizza();
     }
 
