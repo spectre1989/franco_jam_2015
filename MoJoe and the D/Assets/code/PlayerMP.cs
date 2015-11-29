@@ -84,7 +84,7 @@ public class PlayerMP : NetworkBehaviour
     [SyncVar]
     private bool synchedHasPizza = false;
     [SyncVar]
-    private int synchedPlayerNum = 0;
+    public int synchedPlayerNum = 0;
 
     // Use this for initialization
     void Start()
@@ -514,6 +514,10 @@ public class PlayerMP : NetworkBehaviour
                     case Player.state.scissors:
                         transform.Find("scissors").gameObject.SetActive(false);
                         break;
+
+                    case Player.state.pizza:
+                        transform.Find("pizza").gameObject.SetActive(false);
+                        break;
                 }
                 break;
         }
@@ -550,7 +554,6 @@ public class PlayerMP : NetworkBehaviour
         Vector3 pizzaSpawnPos = this.transform.position + new Vector3(m_lastDir * 2, 1.0f, 0);
         this.CmdDropPizza(pizzaSpawnPos, _force);
         
-        m_state = Player.state.none;
         CmdUpdateState(m_state);
     }
 
