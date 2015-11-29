@@ -20,6 +20,7 @@ public class Monster : MonoBehaviour {
         m_anim = GetComponent<Animator>();
         m_source = GetComponent<AudioSource>();
         m_end = false;
+        m_anim.SetTrigger("Idle");
 	}
 	
 	// Update is called once per frame
