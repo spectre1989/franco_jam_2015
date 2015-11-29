@@ -3,6 +3,8 @@ using UnityEngine.Networking;
 
 public class Monster : MonoBehaviour {
     float m_timeLeft;
+    //ANIM
+    Animator m_anim;
 
     //AUDIO
     public AudioClip m_eatSound;
@@ -14,13 +16,14 @@ public class Monster : MonoBehaviour {
 	void Start ()
     {
         m_timeLeft = 120;
+        m_anim = GetComponent<Animator>();
 	
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-	
+	    //if gameinfo.instance.state == 
 	}
 
     void OnTriggerEnter(Collider other)
@@ -48,8 +51,11 @@ public class Monster : MonoBehaviour {
 
         if (other.gameObject.CompareTag("Item"))
         {
+            Debug.Log("CHOMP");
+            m_anim.SetTrigger("Eat");
             if (NetworkServer.active)
             {
+                m_anim.SetTrigger("Eat");
                 GameInfo.Instance.PizzaEaten();
             }
             else if (NetworkManager.singleton == null)
