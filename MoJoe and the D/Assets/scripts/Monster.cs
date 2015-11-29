@@ -11,19 +11,26 @@ public class Monster : MonoBehaviour {
     public AudioClip m_killSound;
 
     public AudioSource m_source;
+    bool m_end;
 
 	// Use this for initialization
 	void Start ()
     {
         m_timeLeft = 120;
         m_anim = GetComponent<Animator>();
-	
+        m_source = GetComponent<AudioSource>();
+        m_end = false;
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-	    //if gameinfo.instance.state == 
+        if (GameInfo.Instance.CurrentState == GameInfo.State.EndOfGame && !m_end)
+        {
+            m_anim.SetTrigger("End");
+            m_source.PlayOneShot(m_killSound);
+            m_end = true;
+        }
 	}
 
     void OnTriggerEnter(Collider other)
@@ -51,8 +58,8 @@ public class Monster : MonoBehaviour {
 
         if (other.gameObject.CompareTag("Item"))
         {
-            Debug.Log("CHOMP");
             m_anim.SetTrigger("Eat");
+            m_source.PlayOneShot(m_eatSound);
             if (NetworkServer.active)
             {
                 m_anim.SetTrigger("Eat");
@@ -66,6 +73,8 @@ public class Monster : MonoBehaviour {
                 other = null;
                 m_timeLeft += 30.0f;
             }
+
+            m_anim.SetTrigger("Idle");
         }
     }
 }
