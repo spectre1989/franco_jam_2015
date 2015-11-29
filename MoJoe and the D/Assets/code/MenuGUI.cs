@@ -184,7 +184,25 @@ public class MenuGUI : MonoBehaviour
                         break;
 
                     case GameInfo.State.EndOfGame:
-                        this.text = "";
+                        int highest = -1;
+                        foreach (GameInfo.PlayerInfo playerInfo in GameInfo.Instance.PlayerInfoList)
+                        {
+                            if (playerInfo.score > highest)
+                            {
+                                highest = playerInfo.score;
+                            }
+                        }
+                        GameInfo.PlayerInfo[] winners = Array.FindAll(GameInfo.Instance.PlayerInfoList, delegate(GameInfo.PlayerInfo playerInfo)
+                        {
+                            return playerInfo.score == highest;
+                        });
+                        String[] winnerNames = new String[winners.Length];
+                        for (int i = 0; i < winners.Length; ++i)
+                        {
+                            winnerNames[i] = winners[i].name;
+                        }
+
+                        this.text = (winners.Length == 1 ? "Winner - " : "Winners - ") + String.Join(", ", winnerNames);
                         break;
                 }
             }
