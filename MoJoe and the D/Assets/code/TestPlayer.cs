@@ -82,7 +82,6 @@ public class TestPlayer : NetworkBehaviour
     private Queue<SynchedPosition> synchedPositions = new Queue<SynchedPosition>();
     private SynchedPosition interpolateFromSynchedPosition;
     private float targetLerpTime;
-
     [SyncVar]
     private MagicType synchedMagic;
 
@@ -277,6 +276,8 @@ public class TestPlayer : NetworkBehaviour
     private void CmdSetPlayerName(String name)
     {
         this.synchedName = name;
+
+        GameInfo.Instance.SetPlayerName(this.gameObject, name);
     }
 
     [Command]
@@ -299,6 +300,7 @@ public class TestPlayer : NetworkBehaviour
         {
             GameInfo.Instance.AddToRespawnQueue(playerGameObject.GetComponent<NetworkIdentity>().connectionToClient);
             NetworkServer.Destroy(playerGameObject);
+            GameInfo.Instance.IncScore(this.gameObject);
         }
     }
 }

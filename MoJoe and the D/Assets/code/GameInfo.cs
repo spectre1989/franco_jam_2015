@@ -5,8 +5,8 @@ using System;
 
 public class GameInfo : NetworkBehaviour
 {
-    private static GameInfo intance;
-    public static GameInfo Instance { get { return GameInfo.intance; } }
+    private static GameInfo instance;
+    public static GameInfo Instance { get { return GameInfo.instance; } }
 
     public enum State
     {
@@ -49,6 +49,8 @@ public class GameInfo : NetworkBehaviour
     private float endOfGameTimer;
     [SyncVar]
     private int numPlayers;
+    [SyncVar]
+    private SyncListPlayerInfo playerInfoList = new SyncListPlayerInfo();
 
     private Queue<RespawnRequest> respawnQueue;
 
@@ -56,11 +58,32 @@ public class GameInfo : NetworkBehaviour
     public float Countdown { get { return this.countdownTimer; } }
     public float GameTimer { get { return this.gameTimer; } }
     public int NumPlayers { get { return this.numPlayers; } }
+    public PlayerInfo[] PlayerInfoList 
+    { 
+        get
+        {
+            PlayerInfo[] ret = new PlayerInfo[this.playerInfoList.Count];
+            for (int i = 0; i < this.playerInfoList.Count; ++i)
+            {
+                ret[i] = this.playerInfoList[i];
+            }
+
+            return ret;
+        }
+    }
 
     private void Awake()
     {
-        GameInfo.intance = this;
+        GameInfo.instance = this;
         this.currentState = State.WaitingForPlayers;
+    }
+
+    private void OnDestroy()
+    {
+        if (GameInfo.instance == this)
+        {
+            GameInfo.instance = null;
+        }
     }
     
     private void Update()
@@ -90,6 +113,7 @@ public class GameInfo : NetworkBehaviour
                         if (this.countdownTimer <= 0.0f)
                         {
                             this.EnterState(State.InGame);
+                            return;
                         }
                     }
                     break;
@@ -99,7 +123,23 @@ public class GameInfo : NetworkBehaviour
                         this.gameTimer -= Time.deltaTime;
                         if (this.gameTimer <= 0.0f)
                         {
+                            List<GameObject> toDelete = new List<GameObject>();
+
+                            foreach (NetworkConnection networkConnection in this.AllConnections)
+                            {
+                                foreach (PlayerController controller in networkConnection.playerControllers)
+                                {
+                                    toDelete.Add(controller.gameObject);
+                                }
+                            }
+
+                            foreach (GameObject go in toDelete)
+                            {
+                                NetworkServer.Destroy(go);
+                            }
+
                             this.EnterState(State.EndOfGame);
+                            return;
                         }
 
                         while (this.respawnQueue.Count > 0 && this.respawnQueue.Peek().time <= Time.time)
@@ -143,13 +183,22 @@ public class GameInfo : NetworkBehaviour
             case State.InGame:
                 this.respawnQueue = new Queue<RespawnRequest>();
                 this.gameTimer = this.gameLength;
-
+                
                 List<NetworkConnection> connections = this.AllConnections;
                 for(int i = 0; i < connections.Count; ++i)
                 {
                     GameObject player = Instantiate(NetworkManager.singleton.playerPrefab) as GameObject;
                     player.transform.position = NetworkManager.singleton.startPositions[i % NetworkManager.singleton.startPositions.Count].position;
                     NetworkServer.AddPlayerForConnection(connections[i], player, 0);
+                }
+
+                while (this.playerInfoList.Count < connections.Count)
+                {
+                    this.playerInfoList.Add(new PlayerInfo());
+                }
+                for (int i = 0; i < connections.Count; ++i)
+                {
+                    this.playerInfoList[i] = new PlayerInfo();
                 }
 
                 break;
@@ -192,5 +241,45 @@ public class GameInfo : NetworkBehaviour
     public void AddToRespawnQueue(NetworkConnection connection)
     {
         this.respawnQueue.Enqueue(new RespawnRequest { networkConnection = connection, time = Time.time + this.respawnTime });
+    }
+
+    public void SetPlayerName(GameObject gameObject, String name)
+    {
+        int i = this.AllConnections.FindIndex(delegate(NetworkConnection connection)
+        {
+            if (connection.playerControllers.Count > 0 && connection.playerControllers[0].gameObject == gameObject)
+            {
+                return true;
+            }
+
+            return false;
+        });
+
+        if (i != -1)
+        {
+            PlayerInfo temp = this.playerInfoList[i];
+            temp.name = name;
+            this.playerInfoList[i] = temp;
+        }
+    }
+
+    public void IncScore(GameObject gameObject)
+    {
+        int i = this.AllConnections.FindIndex(delegate(NetworkConnection connection)
+        {
+            if (connection.playerControllers.Count > 0 && connection.playerControllers[0].gameObject == gameObject)
+            {
+                return true;
+            }
+
+            return false;
+        });
+
+        if (i != -1)
+        {
+            PlayerInfo temp = this.playerInfoList[i];
+            ++temp.score;
+            this.playerInfoList[i] = temp;
+        }
     }
 }

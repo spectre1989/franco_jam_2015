@@ -9,6 +9,8 @@ public class MenuGUI : MonoBehaviour
     private CustomNetworkManager networkManager;
     private State state = null;
 
+    public GameObject gameInfoPrefab;
+
     private void Start()
     {
         this.networkManager = this.GetComponent<CustomNetworkManager>();
@@ -51,6 +53,8 @@ public class MenuGUI : MonoBehaviour
 
     private class JoinOrHostState : State
     {
+        private bool startHosting = false;
+
         public JoinOrHostState(CustomNetworkManager networkManager)
             : base(networkManager)
         {
@@ -67,9 +71,11 @@ public class MenuGUI : MonoBehaviour
 
             if (GUILayout.Button("Host Game", GUILayout.Width(100)))
             {
-                GameInfo.Instance.Init();
-                this.networkManager.StartHost();
-                this.nextState = new HostInGameState(this.networkManager);
+                if (this.networkManager.playerName == "")
+                {
+                    this.networkManager.playerName = "Player";
+                }
+                this.startHosting = true;
             }
 
             GUILayout.Space(20);
@@ -78,6 +84,10 @@ public class MenuGUI : MonoBehaviour
             this.networkManager.networkAddress = GUILayout.TextField(this.networkManager.networkAddress, GUILayout.Width(100));
             if (GUILayout.Button("Join Game", GUILayout.Width(100)))
             {
+                if (this.networkManager.playerName == "")
+                {
+                    this.networkManager.playerName = "Player";
+                }
                 this.networkManager.StartClient();
                 this.nextState = new WaitForJoinGameState(this.networkManager);
             }
@@ -86,6 +96,18 @@ public class MenuGUI : MonoBehaviour
 
         public override void Update()
         {
+            if (this.startHosting)
+            {
+                this.startHosting = false;
+
+                this.networkManager.StartHost();
+
+                GameObject gameInfo = Instantiate(this.networkManager.GetComponent<MenuGUI>().gameInfoPrefab) as GameObject; // barf
+                NetworkServer.Spawn(gameInfo);
+                GameInfo.Instance.Init();
+
+                this.nextState = new HostInGameState(this.networkManager);
+            }
         }
     }
 
@@ -98,16 +120,7 @@ public class MenuGUI : MonoBehaviour
 
         public override void OnGUI()
         {
-            if (this.networkManager.isNetworkActive)
-            {
-                if (this.networkManager.IsClientConnected())
-                {
-                    //ClientScene.Ready(this.networkManager.client.connection);
-                    ClientScene.AddPlayer(0);
-                    this.nextState = new ClientInGameState(this.networkManager);
-                }
-            }
-            else
+            if (this.networkManager.isNetworkActive == false)
             {
                 GUILayout.Label("Failed to connect :(");
                 if (GUILayout.Button("Back", GUILayout.Width(100)))
@@ -119,13 +132,20 @@ public class MenuGUI : MonoBehaviour
 
         public override void Update()
         {
-            
+            if (this.networkManager.isNetworkActive)
+            {
+                if (this.networkManager.IsClientConnected())
+                {
+                    this.nextState = new ClientInGameState(this.networkManager);
+                }
+            }
         }
     }
 
     private class InGameState : State
     {
         protected bool isClientConnected = false;
+        private String text = "";
 
         public InGameState(CustomNetworkManager networkManager)
             : base(networkManager)
@@ -134,34 +154,45 @@ public class MenuGUI : MonoBehaviour
         public override void Update()
         {
             this.isClientConnected = this.networkManager.client != null && this.networkManager.client.isConnected;
-        }
+            this.text = "";
 
-        public override void OnGUI()
-        {
-            if (this.isClientConnected)
+            if (this.isClientConnected && GameInfo.Instance != null)
             {
                 switch (GameInfo.Instance.CurrentState)
                 {
                     case GameInfo.State.WaitingForPlayers:
-                        GUILayout.Label(String.Format("Waiting for players - {0}/3", GameInfo.Instance.NumPlayers));
+                        this.text = String.Format("Waiting for players - {0}/3", GameInfo.Instance.NumPlayers);
                         break;
 
                     case GameInfo.State.Countdown:
-                        GUILayout.Label(String.Format("STARTING IN {0}", Mathf.CeilToInt(GameInfo.Instance.Countdown)));
+                        this.text = String.Format("STARTING IN {0}", Mathf.CeilToInt(GameInfo.Instance.Countdown));
                         break;
 
                     case GameInfo.State.InGame:
                         int seconds = Mathf.CeilToInt(GameInfo.Instance.GameTimer);
                         int minutes = seconds / 60;
                         seconds = seconds % 60;
-                        GUILayout.Label(String.Format("{0}:{1:00}", minutes, seconds));
+                        this.text = String.Format("{0}:{1:00}", minutes, seconds);
+                        this.text += "\n\n";
+                        foreach (GameInfo.PlayerInfo playerInfo in GameInfo.Instance.PlayerInfoList)
+                        {
+                            if (playerInfo.name != "")
+                            {
+                                this.text += String.Format("{0} - {1}\n", playerInfo.name, playerInfo.score);
+                            }
+                        }
                         break;
 
                     case GameInfo.State.EndOfGame:
-                        
+                        this.text = "";
                         break;
                 }
             }
+        }
+
+        public override void OnGUI()
+        {
+            GUILayout.Label(this.text);
         }
     }
 

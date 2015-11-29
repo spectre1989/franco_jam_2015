@@ -115,52 +115,6 @@ Transform:
   - {fileID: 990528722}
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!1001 &767191145
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 415848, guid: b542947e55930df4bb9a1ac2a20656a1, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 415848, guid: b542947e55930df4bb9a1ac2a20656a1, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 415848, guid: b542947e55930df4bb9a1ac2a20656a1, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 415848, guid: b542947e55930df4bb9a1ac2a20656a1, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 415848, guid: b542947e55930df4bb9a1ac2a20656a1, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 415848, guid: b542947e55930df4bb9a1ac2a20656a1, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 415848, guid: b542947e55930df4bb9a1ac2a20656a1, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 415848, guid: b542947e55930df4bb9a1ac2a20656a1, type: 2}
-      propertyPath: m_RootOrder
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 143340, guid: b542947e55930df4bb9a1ac2a20656a1, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: b542947e55930df4bb9a1ac2a20656a1, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &960394435
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,6 +403,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e533dcd5572c773459a630e9f55a58e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameInfoPrefab: {fileID: 143340, guid: b542947e55930df4bb9a1ac2a20656a1, type: 2}
 --- !u!4 &1519427710
 Transform:
   m_ObjectHideFlags: 0
@@ -483,11 +438,12 @@ MonoBehaviour:
   m_MaxDelay: .00999999978
   m_LogLevel: 2
   m_PlayerPrefab: {fileID: 173428, guid: b5564d797ffec294dacc61f73fd33a2b, type: 2}
-  m_AutoCreatePlayer: 0
+  m_AutoCreatePlayer: 1
   m_PlayerSpawnMethod: 0
   m_OfflineScene: 
   m_OnlineScene: 
-  m_SpawnPrefabs: []
+  m_SpawnPrefabs:
+  - {fileID: 143340, guid: b542947e55930df4bb9a1ac2a20656a1, type: 2}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:
