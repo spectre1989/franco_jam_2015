@@ -29,6 +29,7 @@ public class Monster : MonoBehaviour {
         if (GameInfo.Instance.CurrentState == GameInfo.State.EndOfGame && !m_end)
         {
             m_anim.SetTrigger("End");
+            m_anim.SetTrigger("Idle");
             m_source.PlayOneShot(m_killSound);
             m_end = true;
         }
