@@ -11,6 +11,11 @@ public class MenuGUI : MonoBehaviour
 
     public GameObject gameInfoPrefab;
 
+    public GameObject instructions;
+    public TextMesh ingame;
+    public TextMesh win;
+    public GameObject textPlane;
+
     private void Start()
     {
         this.networkManager = this.GetComponent<CustomNetworkManager>();
@@ -58,6 +63,10 @@ public class MenuGUI : MonoBehaviour
         public JoinOrHostState(CustomNetworkManager networkManager)
             : base(networkManager)
         {
+            MenuGUI menuGUI = networkManager.GetComponent<MenuGUI>();
+            menuGUI.textPlane.SetActive(true);
+            menuGUI.instructions.SetActive(true);
+            Camera.main.transform.rotation = Quaternion.identity;
         }
 
         public override void OnGUI()
@@ -90,6 +99,10 @@ public class MenuGUI : MonoBehaviour
                 }
                 this.networkManager.StartClient();
                 this.nextState = new WaitForJoinGameState(this.networkManager);
+
+                MenuGUI menuGUI = networkManager.GetComponent<MenuGUI>();
+                menuGUI.textPlane.SetActive(false);
+                menuGUI.instructions.SetActive(false);
             }
             GUILayout.EndHorizontal();
         }
@@ -107,6 +120,10 @@ public class MenuGUI : MonoBehaviour
                 GameInfo.Instance.Init();
 
                 this.nextState = new HostInGameState(this.networkManager);
+
+                MenuGUI menuGUI = networkManager.GetComponent<MenuGUI>();
+                menuGUI.textPlane.SetActive(false);
+                menuGUI.instructions.SetActive(false);
             }
         }
     }

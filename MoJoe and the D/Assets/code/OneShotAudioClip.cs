@@ -4,6 +4,10 @@ public class OneShotAudioClip : MonoBehaviour
 {
     public static void Create(Vector3 position, AudioClip clip)
     {
+        if (clip == null)
+        {
+            return;
+        }
         GameObject go = new GameObject(clip.name);
         go.transform.position = position;
         go.AddComponent<AudioSource>().PlayOneShot(clip);
