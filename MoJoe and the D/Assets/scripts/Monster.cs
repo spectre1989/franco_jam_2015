@@ -23,7 +23,7 @@ public class Monster : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-	
+	    //if gameinfo.instance.state == 
 	}
 
     void OnTriggerEnter(Collider other)
