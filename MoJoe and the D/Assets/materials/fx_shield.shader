@@ -59,7 +59,7 @@ Shader "Custom/fx_shield"
 		float mix = 1 + sin((vert.x - uv.x) + (vert.y - uv.y) + (vert.z - uv.z));
 		float mix2 = 1 + sin((vert.x + uv.x) - (vert.y + uv.y) - (vert.z + uv.z)) / _Distortion;
 
-		return half4((_Colour * mix * 0.3) + (_Colour2 * mix2 * 0.3));
+		return half4((_Colour * mix * 0.1) + (_Colour2 * mix2 * 0.1));
 	}
 		ENDCG
 

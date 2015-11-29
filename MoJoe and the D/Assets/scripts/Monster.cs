@@ -1,9 +1,14 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.Networking;
 
 public class Monster : MonoBehaviour {
     float m_timeLeft;
 
+    //AUDIO
+    public AudioClip m_eatSound;
+    public AudioClip m_killSound;
+
+    public AudioSource m_source;
 
 	// Use this for initialization
 	void Start ()
@@ -22,20 +27,39 @@ public class Monster : MonoBehaviour {
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            //Kill player
-            if (other.GetComponent<Player>().getItem() != null)
+            if (other.GetComponent<Player>() != null)
             {
-                other.GetComponent<Player>().resetItem();
-                m_timeLeft += 30.0f;
+                //Kill player
+                if (other.GetComponent<Player>().getItem() != null)
+                {
+                    other.GetComponent<Player>().resetItem();
+                    m_timeLeft += 30.0f;
+                }
+                other.GetComponent<Rigidbody>().transform.position = other.GetComponent<Player>().getStartPos();
             }
-            other.GetComponent<Rigidbody>().transform.position = other.GetComponent<Player>().getStartPos();
+            else if (other.GetComponent<PlayerMP>() != null)
+            {
+                if (other.GetComponent<PlayerMP>().isLocalPlayer)
+                {
+                    other.GetComponent<PlayerMP>().EatenByMonster();
+                }
+            }
         }
 
         if (other.gameObject.CompareTag("Item"))
         {
-            other.GetComponent<Rigidbody>().transform.position = other.GetComponent<Pizza>().getStartPos();
-            other.GetComponent<Player>().setState(Player.state.none);
-            m_timeLeft += 30.0f;
+            if (NetworkServer.active)
+            {
+                GameInfo.Instance.PizzaEaten();
+            }
+            else if (NetworkManager.singleton == null)
+            {
+                Player player = other.GetComponent<Pizza>().getLastHolder();
+                other.GetComponent<Rigidbody>().velocity = new Vector3();
+                other.transform.position = other.GetComponent<Pizza>().getStartPos();
+                other = null;
+                m_timeLeft += 30.0f;
+            }
         }
     }
 }

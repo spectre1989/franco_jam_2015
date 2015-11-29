@@ -63,7 +63,7 @@ public class TestPlayer : NetworkBehaviour
     private MagicType magic;
 
     // Network stuff
-    struct SynchedPosition
+    private struct SynchedPosition
     {
         public float t;
         public Vector3 position;
@@ -300,7 +300,7 @@ public class TestPlayer : NetworkBehaviour
         {
             GameInfo.Instance.AddToRespawnQueue(playerGameObject.GetComponent<NetworkIdentity>().connectionToClient);
             NetworkServer.Destroy(playerGameObject);
-            GameInfo.Instance.IncScore(this.gameObject);
+            GameInfo.Instance.ChangeScore(this.gameObject, 1);
         }
     }
 }

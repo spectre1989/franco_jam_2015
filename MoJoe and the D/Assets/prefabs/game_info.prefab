@@ -73,9 +73,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   countdownLength: 5
-  gameLength: 15
+  gameLength: 120
   endOfGameLength: 10
   respawnTime: 2
+  pizzaPrefab: {fileID: 116780, guid: b421079a314cd0246ac64b204627e2e0, type: 2}
+  timeAddedPerSliceOfPizza: 15
+  pizzaRespawnTime: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -89,6 +92,14 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: gameLength
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: pizzaPrefab
+      value: 
+      objectReference: {fileID: 116780, guid: b421079a314cd0246ac64b204627e2e0, type: 2}
+    - target: {fileID: 0}
+      propertyPath: timeAddedPerSliceOfPizza
       value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []

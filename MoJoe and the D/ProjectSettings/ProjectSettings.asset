@@ -10,8 +10,8 @@ PlayerSettings:
   targetResolution: 0
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: MoJoe and the D
-  productName: MoJoe and the D
+  companyName: DefaultCompany
+  productName: MoJoandTheD
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_ShowUnitySplashScreen: 1
@@ -92,7 +92,7 @@ PlayerSettings:
   metroEnableLowLatencyPresentationAPI: 0
   xboxOneDisableKinectGpuReservation: 0
   virtualRealitySupported: 0
-  productGUID: 0ec3a67d58fcda343b852b5e837128bb
+  productGUID: 2ebaa0220d2520a45afe1548359a4bb7
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 9
   AndroidPreferredInstallLocation: 1
@@ -161,13 +161,7 @@ PlayerSettings:
     banner: {fileID: 0}
   androidGamepadSupportLevel: 0
   resolutionDialogBanner: {fileID: 0}
-  m_BuildTargetIcons:
-  - m_BuildTarget: 
-    m_Icons:
-    - serializedVersion: 2
-      m_Icon: {fileID: 0}
-      m_Width: 128
-      m_Height: 128
+  m_BuildTargetIcons: []
   m_BuildTargetBatching: []
   m_BuildTargetGraphicsAPIs: []
   webPlayerTemplate: APPLICATION:Default
@@ -320,7 +314,7 @@ PlayerSettings:
   psmSplashimage: {fileID: 0}
   spritePackerPolicy: 
   scriptingDefineSymbols: {}
-  metroPackageName: MoJoe and the D
+  metroPackageName: MoJoandTheD
   metroPackageLogo: 
   metroPackageLogo140: 
   metroPackageLogo180: 
@@ -331,7 +325,7 @@ PlayerSettings:
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: MoJoe and the D
+  metroApplicationDescription: MoJoandTheD
   metroStoreTileLogo80: 
   metroStoreTileLogo: 
   metroStoreTileLogo140: 
@@ -446,7 +440,6 @@ PlayerSettings:
   XboxOnePersistentLocalStorageSize: 0
   intPropertyNames:
   - Android::ScriptingBackend
-  - CloudNetworkingId::CloudNetworkingId
   - Metro::ScriptingBackend
   - Standalone::ScriptingBackend
   - WP8::ScriptingBackend
@@ -459,7 +452,6 @@ PlayerSettings:
   - iOS::EnableIncrementalBuildSupportForIl2cpp
   - iOS::ScriptingBackend
   Android::ScriptingBackend: 0
-  CloudNetworkingId::CloudNetworkingId: 535502
   Metro::ScriptingBackend: 2
   Standalone::ScriptingBackend: 0
   WP8::ScriptingBackend: 2
@@ -481,18 +473,14 @@ PlayerSettings:
   WebGL::useEmbeddedResources: 0
   XboxOne::enus: 1
   stringPropertyNames:
-  - Build_ServiceEnabled::Build_ServiceEnabled
-  - UNet_ServiceEnabled::UNet_ServiceEnabled
   - WebGL::emscriptenArgs
   - WebGL::template
   - additionalIl2CppArgs::additionalIl2CppArgs
-  Build_ServiceEnabled::Build_ServiceEnabled: True
-  UNet_ServiceEnabled::UNet_ServiceEnabled: True
   WebGL::emscriptenArgs: 
   WebGL::template: APPLICATION:Default
   additionalIl2CppArgs::additionalIl2CppArgs: 
   firstStreamedSceneWithResources: 0
-  cloudProjectId: 343157b3-2802-4aff-b0c4-b18a4ea49e6b
-  projectName: MoJoe and the D 2015
-  organizationId: spectre1989
-  cloudEnabled: 1
+  cloudProjectId: 
+  projectName: 
+  organizationId: 
+  cloudEnabled: 0

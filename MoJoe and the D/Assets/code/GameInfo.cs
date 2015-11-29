@@ -38,6 +38,12 @@ public class GameInfo : NetworkBehaviour
     private float endOfGameLength;
     [SerializeField]
     private float respawnTime;
+    [SerializeField]
+    private GameObject pizzaPrefab;
+    [SerializeField]
+    private float timeAddedPerSliceOfPizza;
+    [SerializeField]
+    private float pizzaRespawnTime;
 
     [SyncVar]
     private State currentState;
@@ -52,7 +58,10 @@ public class GameInfo : NetworkBehaviour
     [SyncVar]
     private SyncListPlayerInfo playerInfoList = new SyncListPlayerInfo();
 
-    private Queue<RespawnRequest> respawnQueue;
+    private List<RespawnRequest> respawnRequests;
+    private GameObject pizza = null;
+    private NetworkConnection playerWhoHasPizza = null;
+    private Vector3 currentPizzaPosition;
 
     public State CurrentState { get { return this.currentState; } }
     public float Countdown { get { return this.countdownTimer; } }
@@ -142,12 +151,36 @@ public class GameInfo : NetworkBehaviour
                             return;
                         }
 
-                        while (this.respawnQueue.Count > 0 && this.respawnQueue.Peek().time <= Time.time)
+                        this.respawnRequests.Sort(delegate(RespawnRequest a, RespawnRequest b)
                         {
-                            GameObject player = Instantiate(NetworkManager.singleton.playerPrefab) as GameObject;
-                            player.transform.position = NetworkManager.singleton.startPositions[UnityEngine.Random.Range(0, NetworkManager.singleton.startPositions.Count)].position;
-                            NetworkServer.AddPlayerForConnection(this.respawnQueue.Peek().networkConnection, player, 0);
-                            this.respawnQueue.Dequeue();
+                            return a.time.CompareTo(b.time);
+                        });
+                        while (this.respawnRequests.Count > 0 && this.respawnRequests[0].time <= Time.time)
+                        {
+                            if (this.respawnRequests[0].networkConnection != null)
+                            {
+                                GameObject player = Instantiate(NetworkManager.singleton.playerPrefab) as GameObject;
+                                player.transform.position = NetworkManager.singleton.startPositions[UnityEngine.Random.Range(0, NetworkManager.singleton.startPositions.Count)].position;
+                                NetworkServer.AddPlayerForConnection(this.respawnRequests[0].networkConnection, player, 0);
+                            }
+                            else
+                            {
+                                if (this.pizza != null)
+                                {
+                                    NetworkServer.Destroy(this.pizza);
+                                }
+                                this.pizza = Instantiate(this.pizzaPrefab);
+                                this.pizza.transform.position = GameObject.Find("pizza_spawn").transform.position;
+                                NetworkServer.Spawn(this.pizza);
+                            }
+                            
+                            this.respawnRequests.RemoveAt(0);
+                        }
+
+                        this.currentPizzaPosition = new Vector3(-50, -50, -50);
+                        if (this.playerWhoHasPizza != null && this.playerWhoHasPizza.playerControllers.Count > 0)
+                        {
+                            this.currentPizzaPosition = this.playerWhoHasPizza.playerControllers[0].gameObject.transform.position;
                         }
                     }
                     break;
@@ -181,8 +214,10 @@ public class GameInfo : NetworkBehaviour
                 break;
 
             case State.InGame:
-                this.respawnQueue = new Queue<RespawnRequest>();
+                this.respawnRequests = new List<RespawnRequest>();
                 this.gameTimer = this.gameLength;
+                this.playerWhoHasPizza = null;
+                this.pizza = null;
                 
                 List<NetworkConnection> connections = this.AllConnections;
                 for(int i = 0; i < connections.Count; ++i)
@@ -191,6 +226,10 @@ public class GameInfo : NetworkBehaviour
                     player.transform.position = NetworkManager.singleton.startPositions[i % NetworkManager.singleton.startPositions.Count].position;
                     NetworkServer.AddPlayerForConnection(connections[i], player, 0);
                 }
+
+                this.pizza = Instantiate(this.pizzaPrefab);
+                this.pizza.transform.position = GameObject.Find("pizza_spawn").transform.position;
+                NetworkServer.Spawn(this.pizza);
 
                 while (this.playerInfoList.Count < connections.Count)
                 {
@@ -240,7 +279,12 @@ public class GameInfo : NetworkBehaviour
 
     public void AddToRespawnQueue(NetworkConnection connection)
     {
-        this.respawnQueue.Enqueue(new RespawnRequest { networkConnection = connection, time = Time.time + this.respawnTime });
+        this.respawnRequests.Add(new RespawnRequest { networkConnection = connection, time = Time.time + this.respawnTime });
+
+        if (this.playerWhoHasPizza == connection)
+        {
+            this.SpawnPizza(this.currentPizzaPosition, Vector3.zero);
+        }
     }
 
     public void SetPlayerName(GameObject gameObject, String name)
@@ -263,7 +307,7 @@ public class GameInfo : NetworkBehaviour
         }
     }
 
-    public void IncScore(GameObject gameObject)
+    public void ChangeScore(GameObject gameObject, int change)
     {
         int i = this.AllConnections.FindIndex(delegate(NetworkConnection connection)
         {
@@ -278,8 +322,74 @@ public class GameInfo : NetworkBehaviour
         if (i != -1)
         {
             PlayerInfo temp = this.playerInfoList[i];
-            ++temp.score;
+            temp.score += change;
             this.playerInfoList[i] = temp;
         }
+    }
+
+    public void SpawnPizza(Vector3 position, Vector3 force)
+    {
+        if (this.pizza != null)
+        {
+            return;
+        }
+
+        this.pizza = Instantiate(this.pizzaPrefab) as GameObject;
+        this.pizza.GetComponent<Rigidbody>().velocity = new Vector3();
+        this.pizza.transform.position = position;
+        this.pizza.GetComponent<Rigidbody>().AddForce(force);
+
+        NetworkServer.Spawn(this.pizza);
+
+        this.playerWhoHasPizza = null;
+    }
+
+    public bool TryPickUpPizza(NetworkConnection connection)
+    {
+        if (this.pizza == null)
+        {
+            return false;
+        }
+
+        NetworkServer.Destroy(this.pizza);
+        this.pizza = null;
+        this.playerWhoHasPizza = connection;
+
+        return true;
+    }
+
+    public void PizzaEaten()
+    {
+        if (this.pizza == null)
+        {
+            Debug.LogWarning("pizza is null, can't be eaten");
+            return;
+        }
+
+        NetworkServer.Destroy(this.pizza);
+        this.pizza = null;
+
+        this.gameTimer += this.timeAddedPerSliceOfPizza;
+
+        this.RespawnPizza();
+    }
+
+    public void RespawnPizza()
+    {
+        if (this.pizza != null)
+        {
+            NetworkServer.Destroy(this.pizza);
+            this.pizza = null;
+        }
+
+        this.playerWhoHasPizza = null;
+        this.respawnRequests.Add(new RespawnRequest { networkConnection = null, time = Time.time + this.pizzaRespawnTime });
+    }
+
+    public void PizzaFellOffSide()
+    {
+        NetworkServer.Destroy(this.pizza);
+        this.pizza = null;
+        this.RespawnPizza();
     }
 }
