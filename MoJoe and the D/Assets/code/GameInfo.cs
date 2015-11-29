@@ -142,6 +142,11 @@ public class GameInfo : NetworkBehaviour
                                 }
                             }
 
+                            if (this.pizza != null)
+                            {
+                                toDelete.Add(this.pizza);
+                            }
+
                             foreach (GameObject go in toDelete)
                             {
                                 NetworkServer.Destroy(go);
@@ -161,6 +166,7 @@ public class GameInfo : NetworkBehaviour
                             {
                                 GameObject player = Instantiate(NetworkManager.singleton.playerPrefab) as GameObject;
                                 player.transform.position = NetworkManager.singleton.startPositions[UnityEngine.Random.Range(0, NetworkManager.singleton.startPositions.Count)].position;
+                                player.GetComponent<PlayerMP>().synchedPlayerNum = GetPlayerNum(this.respawnRequests[0].networkConnection);
                                 NetworkServer.AddPlayerForConnection(this.respawnRequests[0].networkConnection, player, 0);
                             }
                             else
@@ -224,6 +230,7 @@ public class GameInfo : NetworkBehaviour
                 {
                     GameObject player = Instantiate(NetworkManager.singleton.playerPrefab) as GameObject;
                     player.transform.position = NetworkManager.singleton.startPositions[i % NetworkManager.singleton.startPositions.Count].position;
+                    player.GetComponent<PlayerMP>().synchedPlayerNum = GetPlayerNum(connections[i]);
                     NetworkServer.AddPlayerForConnection(connections[i], player, 0);
                 }
 
@@ -391,5 +398,10 @@ public class GameInfo : NetworkBehaviour
         NetworkServer.Destroy(this.pizza);
         this.pizza = null;
         this.RespawnPizza();
+    }
+
+    private int GetPlayerNum(NetworkConnection connection)
+    {
+        return this.AllConnections.IndexOf(connection);
     }
 }
