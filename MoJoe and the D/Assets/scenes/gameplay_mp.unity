@@ -1456,13 +1456,14 @@ TextMesh:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1631631741}
-  m_Text: "Either host a game, and send two friends your IP address, \nor join a game
-    you know is ready to start, by entering in the host\u2019s IP.\n\nControls:\r\n\r\nXBOX
-    CONTROLLER (recommended)\r\n\r\nX = Rock\r\nY = Paper\r\nB = Scissors\r\nA= Jump\r\n\r\nLeft
-    analogue = movement\r\nRight trigger = pick up pizza\r\nLeft trigger = run\r\nRight
-    bumper = throw pizza\r\n\r\nKeyboard: (Seriously, if you can, use a controller)\r\n\r\nA
-    = Rock\r\nW = Paper\r\nB = Scissors\r\nSpace = Jump\r\n\r\nArrow keys = movement\r\nRun
-    = Shift\r\nCtrl = Pick up Pizza\r\nE = Throw pizza\r"
+  m_Text: "THIS GAME REQUIRES 3 PLAYERS! Either host a game, and send two \nfriends
+    your IP address, or join a game you know is ready to start, by \nentering in the
+    host\u2019s IP.\n\nControls:\r\r\nXBOX CONTROLLER (recommended)\r\n\r\nX = Rock\r\nY
+    = Paper\r\nB = Scissors\r\nA= Jump\r\n\r\nLeft analogue = movement\r\nRight trigger
+    = pick up pizza\r\nLeft trigger = run\r\nRight bumper = throw pizza\r\n\r\nKeyboard:
+    (Seriously, if you can, use a controller)\r\n\r\nA = Rock\r\nW = Paper\r\nB =
+    Scissors\r\nSpace = Jump\r\n\r\nArrow keys = movement\r\nRun = Shift\r\nCtrl =
+    Pick up Pizza\r\nE = Throw pizza\r"
   m_OffsetZ: 0
   m_CharacterSize: .610000014
   m_LineSpacing: 1
