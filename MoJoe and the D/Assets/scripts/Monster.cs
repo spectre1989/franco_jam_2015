@@ -26,7 +26,7 @@ public class Monster : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        if (GameInfo.Instance.CurrentState == GameInfo.State.EndOfGame && !m_end)
+        if (GameInfo.Instance != null && GameInfo.Instance.CurrentState == GameInfo.State.EndOfGame && !m_end)
         {
             m_anim.SetTrigger("End");
             m_anim.SetTrigger("Idle");
