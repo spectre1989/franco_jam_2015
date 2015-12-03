@@ -10,7 +10,6 @@ GameObject:
   - 4: {fileID: 481232}
   - 135: {fileID: 13533180}
   - 114: {fileID: 11407154}
-  - 82: {fileID: 8242984}
   m_Layer: 0
   m_Name: magic
   m_TagString: Untagged
@@ -93,76 +92,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 185366}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!82 &8242984
-AudioSource:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 110542}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    - time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
 --- !u!114 &11407154
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -176,10 +105,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_magicker: {fileID: 0}
   m_playerState: 0
-  m_rockSound: {fileID: 8300000, guid: 0e23af30933f7f5469c8fd08ae1c5de2, type: 3}
-  m_paperSound: {fileID: 8300000, guid: 2dfad3416285fc24fa5a378647600f1c, type: 3}
-  m_scissorSound: {fileID: 8300000, guid: d86edce7c301f2441912e2781cf6aa6f, type: 3}
-  m_bouceSound: {fileID: 0}
+  m_volLowRange: .100000001
+  m_volHighRange: .5
 --- !u!135 &13533180
 SphereCollider:
   m_ObjectHideFlags: 1

@@ -11,11 +11,11 @@ public class Player : MonoBehaviour
     public float m_speed;
     public float m_jumpSpeed;
     public float m_bounceForce;
-    Rigidbody m_playerRigidbody;
-    bool m_canDoubleJump;
-    float m_lastDir;
-    float m_nextThrow;
-    bool m_jumping;
+    private Rigidbody m_playerRigidbody;
+    private bool m_canDoubleJump;
+    private float m_lastDir;
+    private float m_nextThrow;
+    private bool m_jumping;
 
     //MAGIC
     public enum state { rock, paper, scissors, none, pizza };
@@ -30,23 +30,15 @@ public class Player : MonoBehaviour
 
     //POINTS
     private GameObject m_item;
-    private int m_points;
 
-    //AUDIO
-    AudioClip m_boop;
-    AudioClip m_jump;
-    AudioClip m_land;
-    AudioClip m_deathSound;
-    AudioClip m_winSound;
-
-    private AudioSource m_source;
+    [SerializeField]
     private float m_volLowRange = 0.1f;
+    [SerializeField]
     private float m_volHighRange = 0.5f;
-    float m_vol;
 
-    bool m_booped;
-    bool m_landing;
-    float m_landWait;
+    private bool m_booped;
+    private bool m_landing;
+    private float m_landWait;
 
 
     // Use this for initialization
@@ -62,20 +54,7 @@ public class Player : MonoBehaviour
         m_lastDir = 0;
 
         //AUDIO
-        m_source = GetComponent<AudioSource>();
         m_landWait = Time.time;
-
-        m_source = GetComponent<AudioSource>();
-        m_landWait = Time.time;
-
-        string[] names = new string[] { "Dave", "Joe", "Mohrag" };
-        m_boop = (AudioClip)Resources.Load("audio/SFX_Walk_" + (m_playerNum + 1) as string);
-        m_jump = (AudioClip)Resources.Load("audio/VO_" + names[m_playerNum] + "_Gulp_1");
-        m_land = (AudioClip)Resources.Load("audio/VO_" + names[m_playerNum] + "_Oof_1");
-        m_deathSound = (AudioClip)Resources.Load("audio/VO_" + names[m_playerNum] + "_Ugh_1");
-        m_winSound = (AudioClip)Resources.Load("audio/VO_" + names[m_playerNum] + "_Rah_1");
-        Debug.Log(m_boop);
-
     }
 
     // Update is called once per frame
@@ -107,8 +86,7 @@ public class Player : MonoBehaviour
 
                 if (!m_booped)
                 {
-                    m_vol = Random.Range(m_volLowRange, m_volHighRange);
-                    m_source.PlayOneShot(m_boop, m_vol);
+                    SoundManager.Instance.CreateSound(SoundManager.SoundType.Step, this.transform.position, this.m_volLowRange, this.m_volHighRange);
                     m_booped = true;
                 }
             }
@@ -136,8 +114,7 @@ public class Player : MonoBehaviour
                     m_landing = true;
 
                     //Audio
-                    m_vol = Random.Range(m_volLowRange, m_volHighRange);
-                    m_source.PlayOneShot(m_jump, m_vol);
+                    SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Jump, this.m_playerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
                     m_landWait = Time.time + 0.3f;
                 }
 
@@ -153,8 +130,7 @@ public class Player : MonoBehaviour
                         m_landing = true;
 
                         //Audio
-                        m_vol = Random.Range(m_volLowRange, m_volHighRange);
-                        m_source.PlayOneShot(m_jump, m_vol);
+                        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Jump, this.m_playerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
                         m_landWait = Time.time + 0.3f;
                     }
                 }
@@ -166,8 +142,7 @@ public class Player : MonoBehaviour
         {
             if (Physics.Linecast(transform.position, transform.position - new Vector3(0, 0.4f, 0)) && Time.time > m_landWait)
             {
-                m_vol = Random.Range(m_volLowRange, m_volHighRange);
-                m_source.PlayOneShot(m_land, m_vol);
+                SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Land, this.m_playerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
                 m_landing = false;
             }
         }
@@ -414,19 +389,15 @@ public class Player : MonoBehaviour
         m_state = state.none;
     }
 
-    public int getPoints() { return m_points; }
-    public void addPoints(int _points) { m_points += _points; }
-    public void removePoints(int _points) { m_points -= _points; }
-
     public void die()
     {
-        m_source.PlayOneShot(m_deathSound, 1F);
+        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Die, this.m_playerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
         transform.position = m_startPos;
     }
 
     public void win()
     {
-        m_source.PlayOneShot(m_winSound, 1F);
+        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Attack, this.m_playerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
     }
 
 }

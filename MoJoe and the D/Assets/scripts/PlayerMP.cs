@@ -28,18 +28,11 @@ public class PlayerMP : NetworkBehaviour
 
     //POINTS
     private int m_points;
-
-    //AUDIO
-    AudioClip m_boop;
-    AudioClip m_jump;
-    AudioClip m_land;
-    AudioClip m_deathSound;
-    AudioClip m_winSound;
-
-    private AudioSource m_source;
+    
+    [SerializeField]
     private float m_volLowRange = 0.1f;
+    [SerializeField]
     private float m_volHighRange = 0.5f;
-    float m_vol;
 
     bool m_booped;
     bool m_landing;
@@ -107,19 +100,7 @@ public class PlayerMP : NetworkBehaviour
             this.CmdSetPlayerName((NetworkManager.singleton as CustomNetworkManager).playerName);
 
             //AUDIO
-            m_source = GetComponent<AudioSource>();
             m_landWait = Time.time;
-
-            m_source = GetComponent<AudioSource>();
-            m_landWait = Time.time;
-
-            string[] names = new string[] { "Dave", "Joe", "Mohrag" };
-            m_boop = (AudioClip)Resources.Load("audio/SFX_Walk_" + (synchedPlayerNum + 1) as string);
-            m_jump = (AudioClip)Resources.Load("audio/VO_" + names[synchedPlayerNum] + "_Gulp_1");
-            m_land = (AudioClip)Resources.Load("audio/VO_" + names[synchedPlayerNum] + "_Oof_1");
-            m_deathSound = (AudioClip)Resources.Load("audio/VO_" + names[synchedPlayerNum] + "_Ugh_1");
-            m_winSound = (AudioClip)Resources.Load("audio/VO_" + names[synchedPlayerNum] + "_Rah_1");
-            Debug.Log(m_boop);
         }
         else
         {
@@ -150,7 +131,7 @@ public class PlayerMP : NetworkBehaviour
             this.m_magic = null;
         }
 
-        OneShotAudioClip.Create(this.transform.position, this.m_deathSound);
+        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Die, this.synchedPlayerNum, this.transform.position, 0.9f, 1.1f);
     }
 
     // Update is called once per frame
@@ -284,8 +265,7 @@ public class PlayerMP : NetworkBehaviour
 
                     if (!m_booped)
                     {
-                        m_vol = UnityEngine.Random.Range(m_volLowRange, m_volHighRange);
-                        m_source.PlayOneShot(m_boop, m_vol);
+                        SoundManager.Instance.CreateSound(SoundManager.SoundType.Step, this.transform.position, this.m_volLowRange, this.m_volHighRange);
                         m_booped = true;
                     }
                 }
@@ -314,8 +294,7 @@ public class PlayerMP : NetworkBehaviour
                         m_landing = true;
 
                         //Audio
-                        m_vol = UnityEngine.Random.Range(m_volLowRange, m_volHighRange);
-                        m_source.PlayOneShot(m_jump, m_vol);
+                        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Jump, this.synchedPlayerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
                         m_landWait = Time.time + 0.3f;
                     }
 
@@ -331,8 +310,7 @@ public class PlayerMP : NetworkBehaviour
                             m_landing = true;
 
                             //Audio
-                            m_vol = UnityEngine.Random.Range(m_volLowRange, m_volHighRange);
-                            m_source.PlayOneShot(m_jump, m_vol);
+                            SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Jump, this.synchedPlayerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
                             m_landWait = Time.time + 0.3f;
                         }
                     }
@@ -344,8 +322,7 @@ public class PlayerMP : NetworkBehaviour
             {
                 if (Physics.Linecast(transform.position, transform.position - new Vector3(0, 0.4f, 0)) && Time.time > m_landWait)
                 {
-                    m_vol = UnityEngine.Random.Range(m_volLowRange, m_volHighRange);
-                    m_source.PlayOneShot(m_land, m_vol);
+                    SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Land, this.synchedPlayerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
                     m_landing = false;
                 }
             }

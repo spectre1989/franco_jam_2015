@@ -10,31 +10,10 @@ public class Magic : MonoBehaviour
     public Player.state m_playerState;
 
     //AUDIO
-    AudioSource m_source;
-    public AudioClip m_rockSound;
-    public AudioClip m_paperSound;
-    public AudioClip m_scissorSound;
-    public AudioClip m_bouceSound;
-    AudioClip[] m_winSounds = new AudioClip[3];
-
+    [SerializeField]
     private float m_volLowRange = 0.1f;
+    [SerializeField]
     private float m_volHighRange = 0.5f;
-    float m_vol;
-
-    // Use this for initialization
-    void Start()
-    {
-        m_source = GetComponent<AudioSource>();
-        m_winSounds[0] = m_rockSound;
-        m_winSounds[1] = m_paperSound;
-        m_winSounds[2] = m_scissorSound;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -48,8 +27,6 @@ public class Magic : MonoBehaviour
                 {
                     /* KILL */
                     other.transform.position = other.gameObject.GetComponent<Player>().getStartPos();
-                    m_vol = Random.Range(m_volLowRange, m_volHighRange);
-                    m_source.PlayOneShot(m_winSounds[(int)m_playerState], m_vol);
                 }
 
                 else if (otherPlayerState == m_playerState)
@@ -58,6 +35,7 @@ public class Magic : MonoBehaviour
                     Vector3 centroid = (other.transform.position + m_magicker.transform.position - new Vector3(0, 1, 0)) / 2.0f;
                     other.gameObject.GetComponent<Rigidbody>().AddExplosionForce(25000.0f, centroid, 1.0f);
                     m_magicker.GetComponent<Rigidbody>().AddExplosionForce(25000.0f, centroid, 1.0f);
+                    SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Attack, m_magicker.GetComponent<Player>().m_playerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
                 }
             }
             else if (other.GetComponent<PlayerMP>() != null)
@@ -70,15 +48,12 @@ public class Magic : MonoBehaviour
                     if (otherPlayer.getState() == canKill[(int)m_playerState] || otherPlayer.getState() == Player.state.none || otherPlayer.getState() == Player.state.pizza)
                     {
                         // kill
-                        Debug.Log("THEIR STATE:" + otherPlayer.getState() + "OUR STATE:" + m_playerState);
                         magicker.Kill(other.gameObject);
-                        m_vol = Random.Range(m_volLowRange, m_volHighRange);
-                        m_source.PlayOneShot(m_winSounds[(int)m_playerState], m_vol);
+                        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Attack, magicker.synchedPlayerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
                     }
                     else if (otherPlayer.getState() == m_playerState)
                     {
                         // bounce
-                        Debug.Log("BOUNCE!! THEIR STATE:" + otherPlayer.getState() + "OUR STATE:" + m_playerState);
                         Vector3 centroid = (other.transform.position + m_magicker.transform.position - new Vector3(0, 1, 0)) / 2.0f;
                         m_magicker.GetComponent<Rigidbody>().AddExplosionForce(25000.0f, centroid, 1.0f);
                     }
