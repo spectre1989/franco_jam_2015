@@ -6,4 +6,14 @@ Wizard colours
 randomised player number
 improved fighting hit detection
 particle effects
-improve pizza interpolation
+more levels
+more backgrounds
+Wizard outfits/picker
+improved terrain
+improved monster
+improved monster anims
+more Dave
+more Dave
+...
+More Joe and Mo
+Improve pizza interpolation
