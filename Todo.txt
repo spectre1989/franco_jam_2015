@@ -17,3 +17,4 @@ more Dave
 ...
 More Joe and Mo
 Improve pizza interpolation
+Remove offline player code, but provide special scene for iterating on player controls etc
