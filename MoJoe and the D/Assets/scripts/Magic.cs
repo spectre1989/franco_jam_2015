@@ -35,7 +35,7 @@ public class Magic : MonoBehaviour
                     Vector3 centroid = (other.transform.position + m_magicker.transform.position - new Vector3(0, 1, 0)) / 2.0f;
                     other.gameObject.GetComponent<Rigidbody>().AddExplosionForce(25000.0f, centroid, 1.0f);
                     m_magicker.GetComponent<Rigidbody>().AddExplosionForce(25000.0f, centroid, 1.0f);
-                    SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Attack, m_magicker.GetComponent<Player>().m_playerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
+                    SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Bump, m_magicker.GetComponent<Player>().m_playerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
                 }
             }
             else if (other.GetComponent<PlayerMP>() != null)
@@ -49,7 +49,28 @@ public class Magic : MonoBehaviour
                     {
                         // kill
                         magicker.Kill(other.gameObject);
-                        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Attack, magicker.synchedPlayerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
+
+                        SoundManager.SoundType soundType = SoundManager.SoundType.Paper;
+                        switch (m_playerState)
+                        {
+                            case Player.state.paper:
+                                soundType = SoundManager.SoundType.Paper;
+                                break;
+
+                            case Player.state.rock:
+                                soundType = SoundManager.SoundType.Rock;
+                                break;
+
+                            case Player.state.scissors:
+                                soundType = SoundManager.SoundType.Scissors;
+                                break;
+
+                            default:
+                                Debug.LogWarning("player killed by " + m_playerState + "????");
+                                break;
+                        }
+
+                        //magicker.CreateNetworkSound(soundType, this.transform.position, this.m_volLowRange, this.m_volHighRange);
                     }
                     else if (otherPlayer.getState() == m_playerState)
                     {
