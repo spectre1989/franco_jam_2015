@@ -26,17 +26,9 @@ public class PlayerMP : NetworkBehaviour
     public float magicRate;
     private float nextMagic;
 
-    //POINTS
-    private int m_points;
-    
-    [SerializeField]
-    private float m_volLowRange = 0.1f;
-    [SerializeField]
-    private float m_volHighRange = 0.5f;
-
-    bool m_booped;
-    bool m_landing;
-    float m_landWait;
+    private bool m_booped;
+    private bool m_landing;
+    private float m_landWait;
 
     // Shoehorned in from TestPlayer
     [SerializeField]
@@ -60,12 +52,18 @@ public class PlayerMP : NetworkBehaviour
         public float t;
         public Vector3 position;
         public Quaternion rotation;
+        public bool stepSound;
+        public bool jumpSound;
+        public bool landSound;
 
-        public SynchedPosition(float t, Vector3 position, Quaternion rotation)
+        public SynchedPosition(float t, Vector3 position, Quaternion rotation, bool stepSound, bool jumpSound, bool landSound)
         {
             this.t = t;
             this.position = position;
             this.rotation = rotation;
+            this.stepSound = stepSound;
+            this.jumpSound = jumpSound;
+            this.landSound = landSound;
         }
     }
 
@@ -131,7 +129,7 @@ public class PlayerMP : NetworkBehaviour
             this.m_magic = null;
         }
 
-        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Die, this.synchedPlayerNum, this.transform.position, 0.9f, 1.1f);
+        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Die, this.synchedPlayerNum, this.transform.position);
     }
 
     // Update is called once per frame
@@ -143,10 +141,27 @@ public class PlayerMP : NetworkBehaviour
         }
         else
         {
+            bool stepSound = false;
+            bool jumpSound = false;
+            bool landSound = false;
+
             // Interpolate position
             while (this.synchedPositions.Count > 0 && this.synchedPositions.Peek().t <= this.targetLerpTime)
             {
                 this.interpolateFromSynchedPosition = this.synchedPositions.Dequeue();
+
+                if (this.interpolateFromSynchedPosition.stepSound)
+                {
+                    stepSound = true;
+                }
+                if (this.interpolateFromSynchedPosition.jumpSound)
+                {
+                    jumpSound = true;
+                }
+                if (this.interpolateFromSynchedPosition.landSound)
+                {
+                    landSound = true;
+                }
             }
 
             if (this.synchedPositions.Count > 0)
@@ -159,6 +174,20 @@ public class PlayerMP : NetworkBehaviour
             {
                 this.transform.position = this.interpolateFromSynchedPosition.position;
                 this.transform.rotation = this.interpolateFromSynchedPosition.rotation;
+            }
+
+            // Create sounds after position is interpolated
+            if (stepSound)
+            {
+                SoundManager.Instance.CreateSound(SoundManager.SoundType.Step, this.transform.position);
+            }
+            if (jumpSound)
+            {
+                SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Jump, this.synchedPlayerNum, this.transform.position);
+            }
+            if (landSound)
+            {
+                SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Land, this.synchedPlayerNum, this.transform.position);
             }
 
             this.targetLerpTime += Time.deltaTime;
@@ -250,7 +279,10 @@ public class PlayerMP : NetworkBehaviour
             Vector3 bounce = new Vector3();
             Vector3 movement = new Vector3();
             Quaternion rotation = new Quaternion();
-            bool grounded;
+            bool grounded = false;
+            bool stepSound = false;
+            bool jumpSound = false;
+            bool landSound = false;
 
             m_speed = 5 + (Input.GetAxis("LTrigger") * 10);
             movement = Input.GetAxis("Horizontal") * new Vector3(1.0f, 0, 0);
@@ -265,7 +297,8 @@ public class PlayerMP : NetworkBehaviour
 
                     if (!m_booped)
                     {
-                        SoundManager.Instance.CreateSound(SoundManager.SoundType.Step, this.transform.position, this.m_volLowRange, this.m_volHighRange);
+                        SoundManager.Instance.CreateSound(SoundManager.SoundType.Step, this.transform.position);
+                        stepSound = true;
                         m_booped = true;
                     }
                 }
@@ -294,7 +327,8 @@ public class PlayerMP : NetworkBehaviour
                         m_landing = true;
 
                         //Audio
-                        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Jump, this.synchedPlayerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
+                        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Jump, this.synchedPlayerNum, this.transform.position);
+                        jumpSound = true;
                         m_landWait = Time.time + 0.3f;
                     }
 
@@ -310,7 +344,8 @@ public class PlayerMP : NetworkBehaviour
                             m_landing = true;
 
                             //Audio
-                            SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Jump, this.synchedPlayerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
+                            SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Jump, this.synchedPlayerNum, this.transform.position);
+                            jumpSound = true;
                             m_landWait = Time.time + 0.3f;
                         }
                     }
@@ -322,7 +357,8 @@ public class PlayerMP : NetworkBehaviour
             {
                 if (Physics.Linecast(transform.position, transform.position - new Vector3(0, 0.4f, 0)) && Time.time > m_landWait)
                 {
-                    SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Land, this.synchedPlayerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
+                    SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Land, this.synchedPlayerNum, this.transform.position);
+                    landSound = true;
                     m_landing = false;
                 }
             }
@@ -360,7 +396,7 @@ public class PlayerMP : NetworkBehaviour
             m_playerRigidbody.AddForce(bounce);
             if ((int)m_state < 3) { m_magic.transform.position = m_playerRigidbody.transform.position; }
 
-            this.CmdUpdatePosition(new SynchedPosition(Time.time, this.transform.position, this.transform.rotation));
+            this.CmdUpdatePosition(new SynchedPosition(Time.time, this.transform.position, this.transform.rotation, stepSound, jumpSound, landSound));
         }
     }
 
@@ -579,10 +615,6 @@ public class PlayerMP : NetworkBehaviour
         UpdateState(Player.state.none);
     }
 
-    public int getPoints() { return m_points; }
-    public void addPoints(int _points) { m_points += _points; }
-    public void removePoints(int _points) { m_points -= _points; }
-
     // Synch Hooks
     private void OnSynchName(String name)
     {
@@ -676,6 +708,38 @@ public class PlayerMP : NetworkBehaviour
         NetworkServer.Destroy(this.gameObject);
     }
 
+    [Command]
+    private void CmdCreateNetworkSound(SoundManager.SoundType soundType, Vector3 position)
+    {
+        this.RpcCreateSound(this.connectionToClient.connectionId, soundType, position);
+    }
+
+    [Command]
+    private void CmdCreateNetworkPlayerSound(SoundManager.PlayerSoundType soundType)
+    {
+        this.RpcCreatePlayerSound(this.connectionToClient.connectionId, soundType);
+    }
+
+    [ClientRpc]
+    private void RpcCreateSound(int connectionIDOfCreator, SoundManager.SoundType soundType, Vector3 position)
+    {
+        // The creator creates the sound at the time of sending the command, so they can ignore this message
+        if (this.connectionToServer.connectionId != connectionIDOfCreator)
+        {
+            SoundManager.Instance.CreateSound(soundType, position);
+        }
+    }
+
+    [ClientRpc]
+    private void RpcCreatePlayerSound(int connectionIDOfCreator, SoundManager.PlayerSoundType soundType)
+    {
+        // The creator creates the sound at the time of sending the command, so they can ignore this message
+        if (this.connectionToServer.connectionId != connectionIDOfCreator)
+        {
+            SoundManager.Instance.CreateSound(soundType, this.synchedPlayerNum, this.transform.position);
+        }
+    }
+
     // NetworkBehaviour overrides
     public override float GetNetworkSendInterval()
     {
@@ -707,5 +771,19 @@ public class PlayerMP : NetworkBehaviour
     public void FellOffSide()
     {
         CmdRespawnFellOffSide();
+    }
+
+    public void CreateNetworkSound(SoundManager.SoundType soundType, Vector3 position)
+    {
+        CmdCreateNetworkSound(soundType, position);
+
+        SoundManager.Instance.CreateSound(soundType, position);
+    }
+
+    public void CreateNetworkSound(SoundManager.PlayerSoundType soundType)
+    {
+        CmdCreateNetworkPlayerSound(soundType);
+
+        SoundManager.Instance.CreateSound(soundType, this.synchedPlayerNum, this.transform.position);
     }
 }

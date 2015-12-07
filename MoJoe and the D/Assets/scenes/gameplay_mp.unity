@@ -154,104 +154,230 @@ MonoBehaviour:
   - soundType: 0
     clipLists:
     - items:
-      - {fileID: 8300000, guid: 82344995d7765874b8fab4ef8411260c, type: 3}
-      - {fileID: 8300000, guid: b14514dcdf3dd80489968b3141dc70ee, type: 3}
-      - {fileID: 8300000, guid: a4f1b18c8a8142b44a9c1f77a7314ad0, type: 3}
+      - clip: {fileID: 0}
+        minVolume: .899999976
+        maxVolume: 1.10000002
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
     - items:
-      - {fileID: 8300000, guid: 873a95e16b603754f8ee26f5a4016d1d, type: 3}
-      - {fileID: 8300000, guid: b543ff7f80bf687428b57a89bd84883f, type: 3}
-      - {fileID: 8300000, guid: 317c4ff006ee2e549806da2d75f2e7ef, type: 3}
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
     - items:
-      - {fileID: 8300000, guid: acc4222f5f2dfc0429827338d8cba836, type: 3}
-      - {fileID: 8300000, guid: 2c73fca2861e9f146a78a3e4d435b278, type: 3}
-      - {fileID: 8300000, guid: 61ecf78960c2bfc44bb67cc90bfa79c4, type: 3}
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
   - soundType: 1
     clipLists:
     - items:
-      - {fileID: 8300000, guid: d74291076da157f479021f88294a2cbe, type: 3}
-      - {fileID: 8300000, guid: 66ba3e73f448929438d458d034af1d21, type: 3}
-      - {fileID: 8300000, guid: 10c295f813dd8ab469ef1e986383145f, type: 3}
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
     - items:
-      - {fileID: 8300000, guid: 7b15da0de7a70094a855a277a9718200, type: 3}
-      - {fileID: 8300000, guid: 269623812d2e20c489bc5e70bedf9e0c, type: 3}
-      - {fileID: 8300000, guid: 089aa53beddebb34e8f54bc817056b8b, type: 3}
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
     - items:
-      - {fileID: 8300000, guid: d0c87de86d0b1da4485f2ecde3d76e5c, type: 3}
-      - {fileID: 8300000, guid: 10d57a78752a9c24bb8bb54127d8d68b, type: 3}
-      - {fileID: 8300000, guid: 0dac893a85ad82647a758625ccd87136, type: 3}
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
   - soundType: 2
     clipLists:
     - items:
-      - {fileID: 8300000, guid: 44751926c679a8a4f87b17e62b977344, type: 3}
-      - {fileID: 8300000, guid: 5f22610b2e219d749ac9fd7564e77934, type: 3}
-      - {fileID: 8300000, guid: f45e66dd3039f30438026296bffabe0e, type: 3}
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
     - items:
-      - {fileID: 8300000, guid: 1af2780155febb84387e186624e57eb9, type: 3}
-      - {fileID: 8300000, guid: 86b8d3154d1c7444391ad4c8d942457c, type: 3}
-      - {fileID: 8300000, guid: 34778dec23074d548b281f23f3986c5d, type: 3}
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
     - items:
-      - {fileID: 8300000, guid: 54f7aadebdd328748ab8aa4ed79934b5, type: 3}
-      - {fileID: 8300000, guid: 179bf580975a7fd44a6e18cb8c33b3e6, type: 3}
-      - {fileID: 8300000, guid: abdf0310ddb4f614bb39fd39533ccd91, type: 3}
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
   - soundType: 3
     clipLists:
     - items:
-      - {fileID: 8300000, guid: 13e858479b7884249b943b4eeb140a4f, type: 3}
-      - {fileID: 8300000, guid: 9e2029de90a8e7448bb68fccc8404a83, type: 3}
-      - {fileID: 8300000, guid: 1cba19b3841ee9748befaa9ea52e8107, type: 3}
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
     - items:
-      - {fileID: 8300000, guid: 6e012022b531aec40b95edd36fad0296, type: 3}
-      - {fileID: 8300000, guid: c801a3d619cefe34380c7116ac5f8a1f, type: 3}
-      - {fileID: 8300000, guid: e4d3ce9112468c24888ea1060c75bb50, type: 3}
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
     - items:
-      - {fileID: 8300000, guid: 86b68352b98bf904dbccbac3688a2d42, type: 3}
-      - {fileID: 8300000, guid: 9e3c8e1ae4902e1458554c9a66d7df5f, type: 3}
-      - {fileID: 8300000, guid: 2b450f0782609fb47b483e33c3b7293b, type: 3}
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
   - soundType: 4
     clipLists:
     - items:
-      - {fileID: 8300000, guid: 4fd9f2b3edfd65045b5dc17ba2892163, type: 3}
-      - {fileID: 8300000, guid: a62866935b9972948a668df7ba6661d1, type: 3}
-      - {fileID: 8300000, guid: 520560c3a1faad64aaf5b513b0b0101e, type: 3}
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
     - items:
-      - {fileID: 8300000, guid: 90539a85c643974478ee122101adb621, type: 3}
-      - {fileID: 8300000, guid: 6adc6c9bbc4de24468fd37224faacc20, type: 3}
-      - {fileID: 8300000, guid: 65c14dea038eb2f4491a6d75f133e9c0, type: 3}
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
     - items:
-      - {fileID: 8300000, guid: 5c697dccad99a2d4c81d000216ac578c, type: 3}
-      - {fileID: 8300000, guid: 7d7e6b1863ecd1b4bbbf72b7a8edfa8a, type: 3}
-      - {fileID: 8300000, guid: ad8053655b42fcd4180da937a6004579, type: 3}
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
+      - clip: {fileID: 0}
+        minVolume: 0
+        maxVolume: 0
   sounds:
   - soundType: 0
     clips:
-    - {fileID: 8300000, guid: 0e23af30933f7f5469c8fd08ae1c5de2, type: 3}
-    - {fileID: 8300000, guid: 93415d41757c6fa4eb1088fbd584ffac, type: 3}
-    - {fileID: 8300000, guid: 1ec6e6f06e2c36342a32e2c9fdac9c62, type: 3}
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
   - soundType: 1
     clips:
-    - {fileID: 8300000, guid: d522ac982fa98854a98ff06d61b0b9b8, type: 3}
-    - {fileID: 8300000, guid: fe306bef15b88d243b84cba37209bfa5, type: 3}
-    - {fileID: 8300000, guid: 2dfad3416285fc24fa5a378647600f1c, type: 3}
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
   - soundType: 2
     clips:
-    - {fileID: 8300000, guid: d86edce7c301f2441912e2781cf6aa6f, type: 3}
-    - {fileID: 8300000, guid: 06deeea17c8422448b36d04ce37f2419, type: 3}
-    - {fileID: 8300000, guid: ed0be9faac35135449067c2485ccad85, type: 3}
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
   - soundType: 3
     clips:
-    - {fileID: 8300000, guid: 6e46411a823c8ef47bfb4a042706e621, type: 3}
-    - {fileID: 8300000, guid: 18a3aae237d12b84085b67f3fd174eac, type: 3}
-    - {fileID: 8300000, guid: 4d60de8fbf6e8ad46b111ddfde5a7a66, type: 3}
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
   - soundType: 4
     clips:
-    - {fileID: 8300000, guid: 409aa04058f0d5a4480e5bc45c7024fb, type: 3}
-    - {fileID: 8300000, guid: 1d2dba906146ca2418996e81ffb26123, type: 3}
-    - {fileID: 8300000, guid: 81d441cd233aa324893894a2b69ce604, type: 3}
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
   - soundType: 5
     clips:
-    - {fileID: 8300000, guid: 7fdddc34368b08b4f930ce8458cef153, type: 3}
-    - {fileID: 8300000, guid: ad94bcbbac7d7a748b40ba6c7dcc869f, type: 3}
-    - {fileID: 8300000, guid: d46125d3218c2fe44824e4a914627a4d, type: 3}
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
+    - clip: {fileID: 0}
+      minVolume: 0
+      maxVolume: 0
 --- !u!4 &207957373
 Transform:
   m_ObjectHideFlags: 0

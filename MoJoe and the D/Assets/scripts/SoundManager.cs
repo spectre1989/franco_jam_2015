@@ -24,11 +24,19 @@ public class SoundManager : MonoBehaviour
         MonsterNom
     }
 
+    [Serializable]
+    public struct AudioClipInfo
+    {
+        public AudioClip clip;
+        public float minVolume;
+        public float maxVolume;
+    }
+
     // Unity won't serialise a 2D array, so I have to do this shit
     [Serializable]
     public struct AudioClipList
     {
-        public AudioClip[] items;
+        public AudioClipInfo[] items;
     }
 
     [Serializable]
@@ -42,7 +50,7 @@ public class SoundManager : MonoBehaviour
     public struct SoundList
     {
         public SoundType soundType;
-        public AudioClip[] clips;
+        public AudioClipInfo[] clips;
     }
 
     [SerializeField]
@@ -93,7 +101,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void CreateSound(SoundType type, Vector3 position, float minVolume, float maxVolume)
+    public void CreateSound(SoundType type, Vector3 position)
     {
         SoundList soundList = this.sounds[(int)type];
 
@@ -103,12 +111,12 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
-        AudioClip clip = soundList.clips[UnityEngine.Random.Range(0, soundList.clips.Length)];
+        AudioClipInfo clipInfo = soundList.clips[UnityEngine.Random.Range(0, soundList.clips.Length)];
 
-        CreateSound(position, clip, minVolume, maxVolume);
+        CreateSound(position, clipInfo.clip, UnityEngine.Random.Range(clipInfo.minVolume, clipInfo.maxVolume));
     }
 
-    public void CreateSound(PlayerSoundType type, int playerNum, Vector3 position, float minVolume, float maxVolume)
+    public void CreateSound(PlayerSoundType type, int playerNum, Vector3 position)
     {
         PlayerSoundList playerSoundList = this.playerSounds[(int)type];
 
@@ -126,16 +134,16 @@ public class SoundManager : MonoBehaviour
         }
         AudioClipList clipList = playerSoundList.clipLists[playerNum];
 
-        AudioClip clip = clipList.items[UnityEngine.Random.Range(0, clipList.items.Length)];
+        AudioClipInfo clipInfo = clipList.items[UnityEngine.Random.Range(0, clipList.items.Length)];
 
-        CreateSound(position, clip, minVolume, maxVolume);
+        CreateSound(position, clipInfo.clip, UnityEngine.Random.Range(clipInfo.minVolume, clipInfo.maxVolume));
     }
 
-    private void CreateSound(Vector3 position, AudioClip clip, float minVolume, float maxVolume)
+    private void CreateSound(Vector3 position, AudioClip clip, float volume)
     {
         GameObject gameObject = new GameObject(clip.name);
         AudioSource audioSource = gameObject.AddComponent<AudioSource>();
-        audioSource.PlayOneShot(clip, UnityEngine.Random.Range(minVolume, maxVolume));
+        audioSource.PlayOneShot(clip, volume);
         gameObject.AddComponent<DestroyWhenClipFinishedPlaying>();
     }
 }

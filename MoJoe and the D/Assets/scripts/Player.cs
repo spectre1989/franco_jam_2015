@@ -86,7 +86,7 @@ public class Player : MonoBehaviour
 
                 if (!m_booped)
                 {
-                    SoundManager.Instance.CreateSound(SoundManager.SoundType.Step, this.transform.position, this.m_volLowRange, this.m_volHighRange);
+                    SoundManager.Instance.CreateSound(SoundManager.SoundType.Step, this.transform.position);
                     m_booped = true;
                 }
             }
@@ -114,7 +114,7 @@ public class Player : MonoBehaviour
                     m_landing = true;
 
                     //Audio
-                    SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Jump, this.m_playerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
+                    SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Jump, this.m_playerNum, this.transform.position);
                     m_landWait = Time.time + 0.3f;
                 }
 
@@ -130,7 +130,7 @@ public class Player : MonoBehaviour
                         m_landing = true;
 
                         //Audio
-                        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Jump, this.m_playerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
+                        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Jump, this.m_playerNum, this.transform.position);
                         m_landWait = Time.time + 0.3f;
                     }
                 }
@@ -142,7 +142,7 @@ public class Player : MonoBehaviour
         {
             if (Physics.Linecast(transform.position, transform.position - new Vector3(0, 0.4f, 0)) && Time.time > m_landWait)
             {
-                SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Land, this.m_playerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
+                SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Land, this.m_playerNum, this.transform.position);
                 m_landing = false;
             }
         }
@@ -391,13 +391,13 @@ public class Player : MonoBehaviour
 
     public void die()
     {
-        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Die, this.m_playerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
+        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Die, this.m_playerNum, this.transform.position);
         transform.position = m_startPos;
     }
 
     public void win()
     {
-        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Attack, this.m_playerNum, this.transform.position, this.m_volLowRange, this.m_volHighRange);
+        SoundManager.Instance.CreateSound(SoundManager.PlayerSoundType.Attack, this.m_playerNum, this.transform.position);
     }
 
 }

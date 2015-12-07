@@ -24,7 +24,7 @@ public class Monster : MonoBehaviour
         {
             m_anim.SetTrigger("End");
             m_anim.SetTrigger("Idle");
-            SoundManager.Instance.CreateSound(SoundManager.SoundType.MonsterBwargh, this.transform.position, 1.0f, 1.0f);
+            SoundManager.Instance.CreateSound(SoundManager.SoundType.MonsterBwargh, this.transform.position);
             m_end = true;
         }
     }
@@ -44,7 +44,7 @@ public class Monster : MonoBehaviour
             }
             else if (other.GetComponent<PlayerMP>() != null)
             {
-                SoundManager.Instance.CreateSound(SoundManager.SoundType.MonsterNom, this.transform.position, 1.0f, 1.0f);
+                SoundManager.Instance.CreateSound(SoundManager.SoundType.MonsterNom, this.transform.position);
 
                 if (other.GetComponent<PlayerMP>().isLocalPlayer)
                 {
@@ -56,7 +56,7 @@ public class Monster : MonoBehaviour
         if (other.gameObject.CompareTag("Item"))
         {
             m_anim.SetTrigger("Eat");
-            SoundManager.Instance.CreateSound(SoundManager.SoundType.MonsterNom, this.transform.position, 1.0f, 1.0f);
+            SoundManager.Instance.CreateSound(SoundManager.SoundType.MonsterNom, this.transform.position);
             if (NetworkServer.active)
             {
                 GameInfo.Instance.PizzaEaten();
